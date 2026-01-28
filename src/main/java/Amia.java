@@ -14,7 +14,8 @@ public class Amia {
     public static void loop() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            String command = scanner.nextLine().trim();
+            try {
+                String command = scanner.nextLine().trim();
             switch (command.toLowerCase()) {
                 case "bye":
                     scanner.close();
@@ -23,63 +24,86 @@ public class Amia {
                     listTask();
                     break;
                 default:
-                    if (command.startsWith("mark ")) {
+                    if (command.startsWith("mark")) {
                         markTask(command);
-                    } else if (command.startsWith("unmark ")) {
+                    } else if (command.startsWith("unmark")) {
                         unmarkTask(command);
-                    } else if (command.startsWith("todo ")
-                        || command.startsWith("deadline ")
-                        || command.startsWith("event ")) {
+                    } else if (command.startsWith("todo")
+                        || command.startsWith("deadline")
+                        || command.startsWith("event")) {
                         addTask(command);
                     } else {
-                        say(command);
+                        throw new AmiaException("...?");
                     }
+                }
+            } catch (AmiaException e) {
+                say(line());
+                say(e.getMessage());
+                say(line());
             }
         }
     }
 
     public static void addTask(String command) {
         say(line());
-        if (tasks.size() < MAX_TASKS) {
-            Task task;
-
-            if (command.startsWith("todo ")) {
-                task = new ToDo(command.substring(5));
-            } else if (command.startsWith("deadline ")) {
-                String args = command.substring(9);
-                int byIdx = args.lastIndexOf("/by ");
-                if (byIdx != -1) {
-                    String desc = args.substring(0, byIdx - 1);
-                    String by = args.substring(byIdx + 4);
+        try {
+            if (tasks.size() < MAX_TASKS) {
+                Task task;
+                if (command.startsWith("todo")) {
+                    String desc = command.substring(4).trim();
+                    if (desc.isEmpty()) {
+                        throw new AmiaException("... The description of a task cannot be empty...");
+                    }
+                    task = new ToDo(desc);
+                } else if (command.startsWith("deadline")) {
+                    String args = command.substring(8).trim();
+                    int byIdx = args.lastIndexOf("/by");
+                    if (byIdx == -1 || args.isEmpty()) {
+                        throw new AmiaException("Invalid format... Use: deadline <desc> /by <date>");
+                    }
+                    String desc = args.substring(0, byIdx).trim();
+                    String by = args.substring(byIdx + 3).trim();
+                    if (desc.isEmpty()) {
+                        throw new AmiaException("... The description of a task can't be empty...");
+                    }
+                    if (by.isEmpty()) {
+                        throw new AmiaException("... The deadline can't be empty...");
+                    }
                     task = new Deadline(desc, by);
-                } else {
-                    say("Invalid format!"); 
-                    return;
-                }
-            } else if (command.startsWith("event ")) {
-                String args = command.substring(6);
-                int fromIdx = args.lastIndexOf("/from ");
-                int toIdx = args.lastIndexOf("/to ");
-                if (fromIdx != -1 && toIdx != -1) {
-                    String desc = args.substring(0, fromIdx - 1);
-                    String from = args.substring(fromIdx + 6, toIdx - 1);
-                    String to = args.substring(toIdx + 4);
+                } else if (command.startsWith("event")) {
+                    String args = command.substring(5).trim();
+                    int fromIdx = args.lastIndexOf("/from");
+                    int toIdx = args.lastIndexOf("/to");
+                    if (fromIdx == -1 || toIdx == -1 || args.isEmpty()) {
+                        throw new AmiaException("Invalid format... Use: event <desc> /from <start> /to <end>");
+                    }
+                    String desc = args.substring(0, fromIdx).trim();
+                    String from = args.substring(fromIdx + 5, toIdx).trim();
+                    String to = args.substring(toIdx + 3).trim();
+                    if (desc.isEmpty()) {
+                        throw new AmiaException("...The description of a task can't be empty...");
+                    }
+                    if (from.isEmpty()) {
+                        throw new AmiaException("... The start time can't be empty...");
+                    }
+                    if (to.isEmpty()) {
+                        throw new AmiaException("... The end time can't be empty...");
+                    }
                     task = new Event(desc, from, to);
                 } else {
-                    say("Invalid format!");
-                    return;
+                    // should never reach here
+                    task = new ToDo(command);
                 }
-            } else {
-                // should never reach here
-                task = new ToDo(command);
-            }
 
-            tasks.add(task);
-            say("I've added this task!");
-            say("   " + task);
-            say("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
-        } else {
-            say("Task list is full!");
+                tasks.add(task);
+                say("I've added this task!");
+                say("   " + task);
+                say("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
+            } else {
+                throw new AmiaException("... The task list is full...");
+            }
+        } catch (AmiaException e) {
+            say(e.getMessage());
         }
         say(line());
     }
@@ -87,7 +111,7 @@ public class Amia {
     public static void listTask() {
         say(line());
         if (tasks.size() == 0) {
-            say("No tasks to list!"); 
+            say("No tasks to list..."); 
             say(line());
             return;
         }
@@ -101,16 +125,20 @@ public class Amia {
     public static void markTask(String command) {
         say(line());
         try { 
-            int idx = Integer.parseInt(command.substring(5)) - 1;
+            String args = command.substring(4).trim();
+            if (args.isEmpty()) {
+                throw new AmiaException("... Invalid format... Use: mark <index>");
+            }
+            int idx = Integer.parseInt(args) - 1;
             if (idx >= 0 && idx < tasks.size()) {
                 tasks.get(idx).markDone();
                 say("I've marked the task as done!");
                 say("   " + tasks.get(idx));
             } else {
-                say("Invalid task!");
+                throw new AmiaException("... Invalid task number...");
             }
-        } catch (NumberFormatException e) {
-            say(e.toString());
+        } catch (AmiaException e) {
+            say(e.getMessage());
         }
         say(line());
     }
@@ -118,16 +146,20 @@ public class Amia {
     public static void unmarkTask(String command) {
         say(line());
         try { 
-            int idx = Integer.parseInt(command.substring(7)) - 1;
+            String args = command.substring(6).trim();
+            if (args.isEmpty()) {
+                throw new AmiaException("... Invalid format... Use: unmark <index>");
+            }
+            int idx = Integer.parseInt(args) - 1;
             if (idx >= 0 && idx < tasks.size()) {
                 tasks.get(idx).markUndone();
                 say("I've marked the task as not done yet.");
                 say("   " + tasks.get(idx));
             } else {
-                say("Invalid task!");
+                throw new AmiaException("... Invalid task number...");
             }
-        } catch (NumberFormatException e) {
-            say(e.toString());
+        } catch (AmiaException e) {
+            say(e.getMessage());
         }
         say(line());
     }

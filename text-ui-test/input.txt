@@ -8,4 +8,17 @@ todo borrow book
 list
 deadline return book /by Sunday
 event project meeting /from Mon 2pm /to 4pm
+todo
+deadline
+deadline /by 1
+deadline a /by
+event
+event /from /to
+event a /from 1 /to
+event a /from /to 2
+event /from 1 /to 2
+mark
+mark 999
+unmark
+unmark 999
 bye
