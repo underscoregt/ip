@@ -16,7 +16,7 @@ public class Amia {
         while (true) {
             String command = scanner.nextLine().trim();
             switch (command.toLowerCase()) {
-                case "exit":
+                case "bye":
                     scanner.close();
                     return;
                 case "list":
