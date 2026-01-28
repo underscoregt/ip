@@ -32,6 +32,8 @@ public class Amia {
                         || command.startsWith("deadline")
                         || command.startsWith("event")) {
                         addTask(command);
+                    } else if (command.startsWith("delete")) {
+                        deleteTask(command);
                     } else {
                         throw new AmiaException("...?");
                     }
@@ -101,6 +103,28 @@ public class Amia {
                 say("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
             } else {
                 throw new AmiaException("... The task list is full...");
+            }
+        } catch (AmiaException e) {
+            say(e.getMessage());
+        }
+        say(line());
+    }
+
+    public static void deleteTask(String command) {
+        say(line());
+        try { 
+            String args = command.substring(6).trim();
+            if (args.isEmpty()) {
+                throw new AmiaException("... Invalid format... Use: delete <index>");
+            }
+            int idx = Integer.parseInt(args) - 1;
+            if (idx >= 0 && idx < tasks.size()) {
+                Task removedTask = tasks.remove(idx);
+                say("I've removed this task:");
+                say("   " + removedTask);
+                say("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
+            } else {
+                throw new AmiaException("... Invalid task number...");
             }
         } catch (AmiaException e) {
             say(e.getMessage());

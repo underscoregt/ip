@@ -21,4 +21,8 @@ mark
 mark 999
 unmark
 unmark 999
+list
+delete
+delete 1
+list
 bye

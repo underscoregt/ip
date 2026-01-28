@@ -54,7 +54,7 @@
 	You have 7 tasks.
 	-----------------------------------
 	-----------------------------------
-	... The description of a todo cannot be empty...
+	... The description of a task cannot be empty...
 	-----------------------------------
 	-----------------------------------
 	Invalid format... Use: deadline <desc> /by <date>
@@ -91,6 +91,33 @@
 	-----------------------------------
 	-----------------------------------
 	... Invalid task number...
+	-----------------------------------
+	-----------------------------------
+	Here are your tasks: 
+	1. [T][X] read book
+	2. [D][ ] return book (by: June 6th)
+	3. [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+	4. [T][X] join sports club
+	5. [T][ ] borrow book
+	6. [D][ ] return book (by: Sunday)
+	7. [E][ ] project meeting (from: Mon 2pm to: 4pm)
+	-----------------------------------
+	-----------------------------------
+	... Invalid format... Use: delete <index>
+	-----------------------------------
+	-----------------------------------
+	I've removed this task:
+	   [T][X] read book
+	You have 6 tasks.
+	-----------------------------------
+	-----------------------------------
+	Here are your tasks: 
+	1. [D][ ] return book (by: June 6th)
+	2. [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+	3. [T][X] join sports club
+	4. [T][ ] borrow book
+	5. [D][ ] return book (by: Sunday)
+	6. [E][ ] project meeting (from: Mon 2pm to: 4pm)
 	-----------------------------------
 	-----------------------------------
 	Bye!
