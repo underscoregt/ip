@@ -16,27 +16,31 @@ public class Amia {
         while (true) {
             try {
                 String command = scanner.nextLine().trim();
-            switch (command.toLowerCase()) {
-                case "bye":
-                    scanner.close();
-                    return;
-                case "list":
-                    listTask();
-                    break;
-                default:
-                    if (command.startsWith("mark")) {
-                        markTask(command);
-                    } else if (command.startsWith("unmark")) {
-                        unmarkTask(command);
-                    } else if (command.startsWith("todo")
-                        || command.startsWith("deadline")
-                        || command.startsWith("event")) {
+                CommandType cmdType = CommandType.fromString(command.toLowerCase());
+                
+                switch (cmdType) {
+                    case TODO:
+                    case DEADLINE:
+                    case EVENT:
                         addTask(command);
-                    } else if (command.startsWith("delete")) {
+                        break;
+                    case MARK:
+                        markTask(command);
+                        break;
+                    case UNMARK:
+                        unmarkTask(command);
+                        break;
+                    case DELETE:
                         deleteTask(command);
-                    } else {
+                        break;
+                    case LIST:
+                        listTask();
+                        break;
+                    case BYE:
+                        scanner.close();
+                        return;
+                    case UNKNOWN:
                         throw new AmiaException("...?");
-                    }
                 }
             } catch (AmiaException e) {
                 say(line());
