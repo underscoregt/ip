@@ -101,7 +101,7 @@ public class Amia {
 
     public static void exit() {
         say(line());
-        say("\tBye!");
+        say("Bye!");
         say(line());
     }
 
