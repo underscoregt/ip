@@ -27,8 +27,12 @@ public class Amia {
                         markTask(command);
                     } else if (command.startsWith("unmark ")) {
                         unmarkTask(command);
-                    } else {
+                    } else if (command.startsWith("todo ")
+                        || command.startsWith("deadline ")
+                        || command.startsWith("event ")) {
                         addTask(command);
+                    } else {
+                        say(command);
                     }
             }
         }
@@ -37,8 +41,43 @@ public class Amia {
     public static void addTask(String command) {
         say(line());
         if (tasks.size() < MAX_TASKS) {
-            say("Added: " + command);
-            tasks.add(new Task(command));
+            Task task;
+
+            if (command.startsWith("todo ")) {
+                task = new ToDo(command.substring(5));
+            } else if (command.startsWith("deadline ")) {
+                String args = command.substring(9);
+                int byIdx = args.lastIndexOf("/by ");
+                if (byIdx != -1) {
+                    String desc = args.substring(0, byIdx - 1);
+                    String by = args.substring(byIdx + 4);
+                    task = new Deadline(desc, by);
+                } else {
+                    say("Invalid format!"); 
+                    return;
+                }
+            } else if (command.startsWith("event ")) {
+                String args = command.substring(6);
+                int fromIdx = args.lastIndexOf("/from ");
+                int toIdx = args.lastIndexOf("/to ");
+                if (fromIdx != -1 && toIdx != -1) {
+                    String desc = args.substring(0, fromIdx - 1);
+                    String from = args.substring(fromIdx + 6, toIdx - 1);
+                    String to = args.substring(toIdx + 4);
+                    task = new Event(desc, from, to);
+                } else {
+                    say("Invalid format!");
+                    return;
+                }
+            } else {
+                // should never reach here
+                task = new ToDo(command);
+            }
+
+            tasks.add(task);
+            say("I've added this task!");
+            say("   " + task);
+            say("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
         } else {
             say("Task list is full!");
         }
@@ -52,6 +91,7 @@ public class Amia {
             say(line());
             return;
         }
+        say("Here are your tasks: ");
         for (int i = 0; i < tasks.size(); i++) {
             say((i + 1) + ". " + tasks.get(i));
         }
@@ -65,7 +105,7 @@ public class Amia {
             if (idx >= 0 && idx < tasks.size()) {
                 tasks.get(idx).markDone();
                 say("I've marked the task as done!");
-                say("  " + tasks.get(idx));
+                say("   " + tasks.get(idx));
             } else {
                 say("Invalid task!");
             }
