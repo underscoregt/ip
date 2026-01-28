@@ -1,7 +1,58 @@
-Hello from
- ____        _        
-|  _ \ _   _| | _____ 
-| | | | | | | |/ / _ \
-| |_| | |_| |   <  __/
-|____/ \__,_|_|\_\___|
-
+	-----------------------------------
+	Hello! I'm Amia!
+	What can I do for you?
+	-----------------------------------
+	-----------------------------------
+	I've added this task!
+	   [T][ ] read book
+	You have 1 task.
+	-----------------------------------
+	-----------------------------------
+	I've added this task!
+	   [D][ ] return book (by: June 6th)
+	You have 2 tasks.
+	-----------------------------------
+	-----------------------------------
+	I've added this task!
+	   [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+	You have 3 tasks.
+	-----------------------------------
+	-----------------------------------
+	I've added this task!
+	   [T][ ] join sports club
+	You have 4 tasks.
+	-----------------------------------
+	-----------------------------------
+	I've marked the task as done!
+	   [T][X] read book
+	-----------------------------------
+	-----------------------------------
+	I've marked the task as done!
+	   [T][X] join sports club
+	-----------------------------------
+	-----------------------------------
+	I've added this task!
+	   [T][ ] borrow book
+	You have 5 tasks.
+	-----------------------------------
+	-----------------------------------
+	Here are your tasks: 
+	1. [T][X] read book
+	2. [D][ ] return book (by: June 6th)
+	3. [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+	4. [T][X] join sports club
+	5. [T][ ] borrow book
+	-----------------------------------
+	-----------------------------------
+	I've added this task!
+	   [D][ ] return book (by: Sunday)
+	You have 6 tasks.
+	-----------------------------------
+	-----------------------------------
+	I've added this task!
+	   [E][ ] project meeting (from: Mon 2pm to: 4pm)
+	You have 7 tasks.
+	-----------------------------------
+	-----------------------------------
+	Bye!
+	-----------------------------------
