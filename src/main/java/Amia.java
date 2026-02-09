@@ -102,6 +102,7 @@ public class Amia {
                 }
 
                 tasks.add(task);
+                Storage.save(tasks);
                 say("I've added this task!");
                 say("   " + task);
                 say("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
@@ -124,6 +125,7 @@ public class Amia {
             int idx = Integer.parseInt(args) - 1;
             if (idx >= 0 && idx < tasks.size()) {
                 Task removedTask = tasks.remove(idx);
+                Storage.save(tasks);
                 say("I've removed this task:");
                 say("   " + removedTask);
                 say("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
@@ -160,6 +162,7 @@ public class Amia {
             int idx = Integer.parseInt(args) - 1;
             if (idx >= 0 && idx < tasks.size()) {
                 tasks.get(idx).markDone();
+                Storage.save(tasks);
                 say("I've marked the task as done!");
                 say("   " + tasks.get(idx));
             } else {
@@ -181,6 +184,7 @@ public class Amia {
             int idx = Integer.parseInt(args) - 1;
             if (idx >= 0 && idx < tasks.size()) {
                 tasks.get(idx).markUndone();
+                Storage.save(tasks);
                 say("I've marked the task as not done yet.");
                 say("   " + tasks.get(idx));
             } else {
@@ -194,6 +198,11 @@ public class Amia {
 
     public static void start() {
         say(line());
+        try {
+            tasks = Storage.load();
+        } catch (AmiaException e) {
+            say(e.getMessage());
+        }
         say("Hello! I'm Amia!");
         say("What can I do for you?");
         say(line());
