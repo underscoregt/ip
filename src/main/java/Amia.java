@@ -4,7 +4,7 @@ public class Amia {
     private static int MAX_TASKS = 100;
     private static String FILE_PATH = "./data/amia.txt";
 
-    private static ArrayList<Task> tasks = new ArrayList<>();
+    private static TaskList tasks = new TaskList();
     private static Ui ui = new Ui();
     private static Storage storage = new Storage(FILE_PATH);
 
@@ -55,7 +55,7 @@ public class Amia {
     public static void addTask(String command) {
         ui.showLine();
         try {
-            if (tasks.size() < MAX_TASKS) {
+                if (tasks.size() < MAX_TASKS) {
                 Task task;
                 if (command.startsWith("todo")) {
                     String desc = Parser.extractDescription(command, "todo");
@@ -71,7 +71,7 @@ public class Amia {
                 }
 
                 tasks.add(task);
-                storage.save(tasks);
+                storage.save(tasks.toArrayList());
                 ui.showMessage("I've added this task!");
                 ui.showMessage("   " + task);
                 ui.showMessage("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
@@ -91,7 +91,7 @@ public class Amia {
             int idx = Parser.parseIndex(args);
             if (idx >= 0 && idx < tasks.size()) {
                 Task removedTask = tasks.remove(idx);
-                storage.save(tasks);
+                storage.save(tasks.toArrayList());
                 ui.showMessage("I've removed this task:");
                 ui.showMessage("   " + removedTask);
                 ui.showMessage("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
@@ -106,14 +106,18 @@ public class Amia {
 
     public static void listTask() {
         ui.showLine();
-        if (tasks.size() == 0) {
-            ui.showMessage("No tasks to list..."); 
-            ui.showLine();
-            return;
-        }
-        ui.showMessage("Here are your tasks: ");
-        for (int i = 0; i < tasks.size(); i++) {
-            ui.showMessage((i + 1) + ". " + tasks.get(i));
+        try {
+            if (tasks.size() == 0) {
+                ui.showMessage("No tasks to list..."); 
+                ui.showLine();
+                return;
+            }
+            ui.showMessage("Here are your tasks: ");
+            for (int i = 0; i < tasks.size(); i++) {
+                ui.showMessage((i + 1) + ". " + tasks.get(i));
+            }
+        } catch (AmiaException e) {
+            ui.showMessage(e.getMessage());
         }
         ui.showLine();
     }
@@ -124,8 +128,8 @@ public class Amia {
             String args = Parser.extractIndexArg(command, "mark");
             int idx = Parser.parseIndex(args);
             if (idx >= 0 && idx < tasks.size()) {
-                tasks.get(idx).markDone();
-                storage.save(tasks);
+                tasks.markDone(idx);
+                storage.save(tasks.toArrayList());
                 ui.showMessage("I've marked the task as done!");
                 ui.showMessage("   " + tasks.get(idx));
             } else {
@@ -143,8 +147,8 @@ public class Amia {
             String args = Parser.extractIndexArg(command, "unmark");
             int idx = Parser.parseIndex(args);
             if (idx >= 0 && idx < tasks.size()) {
-                tasks.get(idx).markUndone();
-                storage.save(tasks);
+                tasks.markUndone(idx);
+                storage.save(tasks.toArrayList());
                 ui.showMessage("I've marked the task as not done yet.");
                 ui.showMessage("   " + tasks.get(idx));
             } else {
@@ -159,7 +163,7 @@ public class Amia {
     public static void start() {
         ui.showLine();
         try {
-            tasks = storage.load();
+            tasks = new TaskList(storage.load());
         } catch (AmiaException e) {
             ui.showMessage(e.getMessage());
         }
