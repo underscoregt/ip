@@ -89,15 +89,11 @@ public class Amia {
         try {
             String args = Parser.extractIndexArg(command, "delete");
             int idx = Parser.parseIndex(args);
-            if (idx >= 0 && idx < tasks.size()) {
-                Task removedTask = tasks.remove(idx);
-                storage.save(tasks.toArrayList());
-                ui.showMessage("I've removed this task:");
-                ui.showMessage("   " + removedTask);
-                ui.showMessage("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
-            } else {
-                throw new AmiaException("... Invalid task number...");
-            }
+            Task removedTask = tasks.remove(idx);
+            storage.save(tasks.toArrayList());
+            ui.showMessage("I've removed this task:");
+            ui.showMessage("   " + removedTask);
+            ui.showMessage("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
         } catch (AmiaException e) {
             ui.showMessage(e.getMessage());
         }
@@ -127,14 +123,10 @@ public class Amia {
         try {
             String args = Parser.extractIndexArg(command, "mark");
             int idx = Parser.parseIndex(args);
-            if (idx >= 0 && idx < tasks.size()) {
-                tasks.markDone(idx);
-                storage.save(tasks.toArrayList());
-                ui.showMessage("I've marked the task as done!");
-                ui.showMessage("   " + tasks.get(idx));
-            } else {
-                throw new AmiaException("... Invalid task number...");
-            }
+            tasks.markDone(idx);
+            storage.save(tasks.toArrayList());
+            ui.showMessage("I've marked the task as done!");
+            ui.showMessage("   " + tasks.get(idx));
         } catch (AmiaException e) {
             ui.showMessage(e.getMessage());
         }
@@ -146,14 +138,10 @@ public class Amia {
         try {
             String args = Parser.extractIndexArg(command, "unmark");
             int idx = Parser.parseIndex(args);
-            if (idx >= 0 && idx < tasks.size()) {
-                tasks.markUndone(idx);
-                storage.save(tasks.toArrayList());
-                ui.showMessage("I've marked the task as not done yet.");
-                ui.showMessage("   " + tasks.get(idx));
-            } else {
-                throw new AmiaException("... Invalid task number...");
-            }
+            tasks.markUndone(idx);
+            storage.save(tasks.toArrayList());
+            ui.showMessage("I've marked the task as not done yet.");
+            ui.showMessage("   " + tasks.get(idx));
         } catch (AmiaException e) {
             ui.showMessage(e.getMessage());
         }

@@ -8,13 +8,15 @@ public class TaskList {
     }
 
     public TaskList(ArrayList<Task> tasks) {
-        this.tasks = tasks == null ? new ArrayList<>() : tasks;
+        this.tasks = tasks;
     }
 
-    public int size() {
-        return tasks.size();
+    public void validateIndex(int idx) throws AmiaException {
+        if (idx < 0 || idx >= tasks.size()) {
+            throw new AmiaException("... Invalid task number...");
+        }
     }
-
+    
     public void add(Task task) throws AmiaException {
         if (task == null) {
             throw new AmiaException("...Cannot add null task ...");
@@ -22,26 +24,28 @@ public class TaskList {
         tasks.add(task);
     }
 
-    public Task remove(int index) throws AmiaException {
-        if (index < 0 || index >= tasks.size()) {
-            throw new AmiaException("...Invalid task number...");
-        }
-        return tasks.remove(index);
+    public Task remove(int idx) throws AmiaException {
+        validateIndex(idx);
+        return tasks.remove(idx);
     }
 
-    public Task get(int index) throws AmiaException {
-        if (index < 0 || index >= tasks.size()) {
-            throw new AmiaException("...Invalid task number...");
-        }
-        return tasks.get(index);
+    public Task get(int idx) throws AmiaException {
+        validateIndex(idx);
+        return tasks.get(idx);
     }
 
-    public void markDone(int index) throws AmiaException {
-        get(index).markDone();
+    public void markDone(int idx) throws AmiaException {
+        validateIndex(idx);
+        tasks.get(idx).markDone();
     }
 
-    public void markUndone(int index) throws AmiaException {
-        get(index).markUndone();
+    public void markUndone(int idx) throws AmiaException {
+        validateIndex(idx);
+        tasks.get(idx).markUndone();
+    }
+
+    public int size() {
+        return tasks.size();
     }
 
     public ArrayList<Task> toArrayList() {
