@@ -1,4 +1,7 @@
+package amia.task;
 import java.util.ArrayList;
+
+import amia.exception.AmiaException;
 
 public class TaskList {
     private ArrayList<Task> tasks;

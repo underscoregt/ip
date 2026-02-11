@@ -1,6 +1,9 @@
+package amia.task;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+
+import amia.exception.AmiaException;
 
 public class Event extends Task {
     private LocalDateTime from;

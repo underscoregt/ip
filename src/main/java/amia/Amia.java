@@ -1,4 +1,16 @@
+package amia;
 import java.util.ArrayList;
+
+import amia.exception.AmiaException;
+import amia.parser.CommandType;
+import amia.parser.Parser;
+import amia.storage.Storage;
+import amia.task.Deadline;
+import amia.task.Event;
+import amia.task.Task;
+import amia.task.TaskList;
+import amia.task.ToDo;
+import amia.ui.Ui;
 
 public class Amia {
     private static int MAX_TASKS = 100;

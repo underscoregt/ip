@@ -1,3 +1,4 @@
+package amia.parser;
 public enum CommandType {
     TODO("todo"),
     DEADLINE("deadline"),

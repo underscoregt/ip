@@ -1,3 +1,7 @@
+package amia.parser;
+
+import amia.exception.AmiaException;
+
 public class Parser {
 
     public static CommandType parseCommandType(String input) throws AmiaException {
