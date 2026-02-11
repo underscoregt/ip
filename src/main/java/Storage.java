@@ -2,12 +2,16 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class Storage {
-    private static final String FILE_PATH = "./data/amia.txt";
+    private final String filePath;
 
-    public static ArrayList<Task> load() throws AmiaException {
+    public Storage(String filePath) {
+        this.filePath = filePath == null || filePath.isEmpty() ? "./data/amia.txt" : filePath;
+    }
+
+    public ArrayList<Task> load() throws AmiaException {
         ArrayList<Task> tasks = new ArrayList<>();
 
-        File file = new File(FILE_PATH);
+        File file = new File(filePath);
         if (!file.exists()) {
             return tasks; // no file yet = no tasks
         }
@@ -48,14 +52,14 @@ public class Storage {
         return tasks;
     }
 
-    public static void save(ArrayList<Task> tasks) throws AmiaException {
+    public void save(ArrayList<Task> tasks) throws AmiaException {
         try {
-            File dir = new File("./data");
-            if (!dir.exists()) {
-                dir.mkdir();
+            File dir = new File(new File(filePath).getParent());
+            if (dir != null && !dir.exists()) {
+                dir.mkdirs();
             }
 
-            BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PATH));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
             for (Task task : tasks) {
                 bw.write(task.toFileString());
                 bw.newLine();

@@ -1,9 +1,12 @@
 import java.util.ArrayList;
 
 public class Amia {
-    private static ArrayList<Task> tasks = new ArrayList<>();
     private static int MAX_TASKS = 100;
+    private static String FILE_PATH = "./data/amia.txt";
+
+    private static ArrayList<Task> tasks = new ArrayList<>();
     private static Ui ui = new Ui();
+    private static Storage storage = new Storage(FILE_PATH);
 
     public static void main(String[] args) {
         start();
@@ -101,7 +104,7 @@ public class Amia {
                 }
 
                 tasks.add(task);
-                Storage.save(tasks);
+                storage.save(tasks);
                 ui.showMessage("I've added this task!");
                 ui.showMessage("   " + task);
                 ui.showMessage("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
@@ -124,7 +127,7 @@ public class Amia {
             int idx = Integer.parseInt(args) - 1;
             if (idx >= 0 && idx < tasks.size()) {
                 Task removedTask = tasks.remove(idx);
-                Storage.save(tasks);
+                storage.save(tasks);
                 ui.showMessage("I've removed this task:");
                 ui.showMessage("   " + removedTask);
                 ui.showMessage("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
@@ -161,7 +164,7 @@ public class Amia {
             int idx = Integer.parseInt(args) - 1;
             if (idx >= 0 && idx < tasks.size()) {
                 tasks.get(idx).markDone();
-                Storage.save(tasks);
+                storage.save(tasks);
                 ui.showMessage("I've marked the task as done!");
                 ui.showMessage("   " + tasks.get(idx));
             } else {
@@ -183,7 +186,7 @@ public class Amia {
             int idx = Integer.parseInt(args) - 1;
             if (idx >= 0 && idx < tasks.size()) {
                 tasks.get(idx).markUndone();
-                Storage.save(tasks);
+                storage.save(tasks);
                 ui.showMessage("I've marked the task as not done yet.");
                 ui.showMessage("   " + tasks.get(idx));
             } else {
@@ -198,7 +201,7 @@ public class Amia {
     public static void start() {
         ui.showLine();
         try {
-            tasks = Storage.load();
+            tasks = storage.load();
         } catch (AmiaException e) {
             ui.showMessage(e.getMessage());
         }
