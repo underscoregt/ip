@@ -18,7 +18,7 @@ public class Amia {
         while (true) {
             try {
                 String command = ui.readCommand();
-                CommandType cmdType = CommandType.fromString(command.toLowerCase());
+                CommandType cmdType = Parser.parseCommandType(command);
                 
                 switch (cmdType) {
                     case TODO:
@@ -58,48 +58,15 @@ public class Amia {
             if (tasks.size() < MAX_TASKS) {
                 Task task;
                 if (command.startsWith("todo")) {
-                    String desc = command.substring(4).trim();
-                    if (desc.isEmpty()) {
-                        throw new AmiaException("... The description of a task cannot be empty...");
-                    }
+                    String desc = Parser.extractDescription(command, "todo");
                     task = new ToDo(desc);
                 } else if (command.startsWith("deadline")) {
-                    String args = command.substring(8).trim();
-                    int byIdx = args.lastIndexOf("/by");
-                    if (byIdx == -1 || args.isEmpty()) {
-                        throw new AmiaException("Invalid format... Use: deadline <desc> /by <date>");
-                    }
-                    String desc = args.substring(0, byIdx).trim();
-                    String by = args.substring(byIdx + 3).trim();
-                    if (desc.isEmpty()) {
-                        throw new AmiaException("... The description of a task can't be empty...");
-                    }
-                    if (by.isEmpty()) {
-                        throw new AmiaException("... The deadline can't be empty...");
-                    }
-                    task = new Deadline(desc, by);
+                    Parser.DeadlineInfo info = Parser.parseDeadline(command);
+                    task = new Deadline(info.description, info.deadline);
                 } else if (command.startsWith("event")) {
-                    String args = command.substring(5).trim();
-                    int fromIdx = args.lastIndexOf("/from");
-                    int toIdx = args.lastIndexOf("/to");
-                    if (fromIdx == -1 || toIdx == -1 || args.isEmpty()) {
-                        throw new AmiaException("Invalid format... Use: event <desc> /from <start> /to <end>");
-                    }
-                    String desc = args.substring(0, fromIdx).trim();
-                    String from = args.substring(fromIdx + 5, toIdx).trim();
-                    String to = args.substring(toIdx + 3).trim();
-                    if (desc.isEmpty()) {
-                        throw new AmiaException("...The description of a task can't be empty...");
-                    }
-                    if (from.isEmpty()) {
-                        throw new AmiaException("... The start time can't be empty...");
-                    }
-                    if (to.isEmpty()) {
-                        throw new AmiaException("... The end time can't be empty...");
-                    }
-                    task = new Event(desc, from, to);
+                    Parser.EventInfo info = Parser.parseEvent(command);
+                    task = new Event(info.description, info.from, info.to);
                 } else {
-                    // should never reach here
                     task = new ToDo(command);
                 }
 
@@ -119,12 +86,9 @@ public class Amia {
 
     public static void deleteTask(String command) {
         ui.showLine();
-        try { 
-            String args = command.substring(6).trim();
-            if (args.isEmpty()) {
-                throw new AmiaException("... Invalid format... Use: delete <index>");
-            }
-            int idx = Integer.parseInt(args) - 1;
+        try {
+            String args = Parser.extractIndexArg(command, "delete");
+            int idx = Parser.parseIndex(args);
             if (idx >= 0 && idx < tasks.size()) {
                 Task removedTask = tasks.remove(idx);
                 storage.save(tasks);
@@ -156,12 +120,9 @@ public class Amia {
 
     public static void markTask(String command) {
         ui.showLine();
-        try { 
-            String args = command.substring(4).trim();
-            if (args.isEmpty()) {
-                throw new AmiaException("... Invalid format... Use: mark <index>");
-            }
-            int idx = Integer.parseInt(args) - 1;
+        try {
+            String args = Parser.extractIndexArg(command, "mark");
+            int idx = Parser.parseIndex(args);
             if (idx >= 0 && idx < tasks.size()) {
                 tasks.get(idx).markDone();
                 storage.save(tasks);
@@ -178,12 +139,9 @@ public class Amia {
 
     public static void unmarkTask(String command) {
         ui.showLine();
-        try { 
-            String args = command.substring(6).trim();
-            if (args.isEmpty()) {
-                throw new AmiaException("... Invalid format... Use: unmark <index>");
-            }
-            int idx = Integer.parseInt(args) - 1;
+        try {
+            String args = Parser.extractIndexArg(command, "unmark");
+            int idx = Parser.parseIndex(args);
             if (idx >= 0 && idx < tasks.size()) {
                 tasks.get(idx).markUndone();
                 storage.save(tasks);
