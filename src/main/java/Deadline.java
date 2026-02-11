@@ -8,6 +8,7 @@ public class Deadline extends Task {
         DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
     private static final DateTimeFormatter OUTPUT_FORMAT =
         DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma");
+    private static final DateTimeFormatter FILE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
     protected LocalDateTime by;
     
 
@@ -27,6 +28,6 @@ public class Deadline extends Task {
 
     @Override
     public String toFileString() {
-        return "D | " + (isDone ? "1" : "0") + " | " + description + " | " + by;
+        return "D | " + (isDone ? "1" : "0") + " | " + description + " | " + by.format(FILE_FORMAT);
     }
 }

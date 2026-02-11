@@ -1,8 +1,13 @@
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Storage {
     private final String filePath;
+    private static final DateTimeFormatter INPUT_FORMAT = 
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
+    private static final DateTimeFormatter FILE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     public Storage(String filePath) {
         this.filePath = filePath == null || filePath.isEmpty() ? "./data/amia.txt" : filePath;
@@ -13,7 +18,7 @@ public class Storage {
 
         File file = new File(filePath);
         if (!file.exists()) {
-            return tasks; // no file yet = no tasks
+            return tasks;
         }
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
@@ -30,10 +35,10 @@ public class Storage {
                         task = new ToDo(parts[2]);
                         break;
                     case "D":
-                        task = new Deadline(parts[2], parts[3]);
+                        task = new Deadline(parts[2], LocalDateTime.parse(parts[3], FILE_FORMAT).format(INPUT_FORMAT));
                         break;
                     case "E":
-                        task = new Event(parts[2], parts[3], parts[4]);
+                        task = new Event(parts[2], LocalDateTime.parse(parts[3], FILE_FORMAT).format(INPUT_FORMAT), LocalDateTime.parse(parts[4], FILE_FORMAT).format(INPUT_FORMAT));
                         break;
                     default:
                         continue;

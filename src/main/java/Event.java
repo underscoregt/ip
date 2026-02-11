@@ -10,6 +10,7 @@ public class Event extends Task {
             DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
     private static final DateTimeFormatter OUTPUT_FORMAT =
             DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma");
+    private static final DateTimeFormatter FILE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     public Event(String description, String fromStr, String toStr) throws AmiaException{
         super(description);
@@ -28,6 +29,6 @@ public class Event extends Task {
 
     @Override
     public String toFileString() {
-        return "E | " + (isDone ? "1" : "0") + " | " + description + " | " + from + " | " + to;
+        return "E | " + (isDone ? "1" : "0") + " | " + description + " | " + from.format(FILE_FORMAT) + " | " + to.format(FILE_FORMAT);
     }
 }
