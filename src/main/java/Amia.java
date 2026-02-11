@@ -1,9 +1,9 @@
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Amia {
     private static ArrayList<Task> tasks = new ArrayList<>();
     private static int MAX_TASKS = 100;
+    private static Ui ui = new Ui();
 
     public static void main(String[] args) {
         start();
@@ -12,10 +12,9 @@ public class Amia {
     }
 
     public static void loop() {
-        Scanner scanner = new Scanner(System.in);
         while (true) {
             try {
-                String command = scanner.nextLine().trim();
+                String command = ui.readCommand();
                 CommandType cmdType = CommandType.fromString(command.toLowerCase());
                 
                 switch (cmdType) {
@@ -37,21 +36,21 @@ public class Amia {
                         listTask();
                         break;
                     case BYE:
-                        scanner.close();
+                        ui.close();
                         return;
                     case UNKNOWN:
                         throw new AmiaException("...?");
                 }
             } catch (AmiaException e) {
-                say(line());
-                say(e.getMessage());
-                say(line());
+                ui.showLine();
+                ui.showMessage(e.getMessage());
+                ui.showLine();
             }
         }
     }
 
     public static void addTask(String command) {
-        say(line());
+        ui.showLine();
         try {
             if (tasks.size() < MAX_TASKS) {
                 Task task;
@@ -103,20 +102,20 @@ public class Amia {
 
                 tasks.add(task);
                 Storage.save(tasks);
-                say("I've added this task!");
-                say("   " + task);
-                say("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
+                ui.showMessage("I've added this task!");
+                ui.showMessage("   " + task);
+                ui.showMessage("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
             } else {
                 throw new AmiaException("... The task list is full...");
             }
         } catch (AmiaException e) {
-            say(e.getMessage());
+            ui.showMessage(e.getMessage());
         }
-        say(line());
+        ui.showLine();
     }
 
     public static void deleteTask(String command) {
-        say(line());
+        ui.showLine();
         try { 
             String args = command.substring(6).trim();
             if (args.isEmpty()) {
@@ -126,34 +125,34 @@ public class Amia {
             if (idx >= 0 && idx < tasks.size()) {
                 Task removedTask = tasks.remove(idx);
                 Storage.save(tasks);
-                say("I've removed this task:");
-                say("   " + removedTask);
-                say("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
+                ui.showMessage("I've removed this task:");
+                ui.showMessage("   " + removedTask);
+                ui.showMessage("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
             } else {
                 throw new AmiaException("... Invalid task number...");
             }
         } catch (AmiaException e) {
-            say(e.getMessage());
+            ui.showMessage(e.getMessage());
         }
-        say(line());
+        ui.showLine();
     }
 
     public static void listTask() {
-        say(line());
+        ui.showLine();
         if (tasks.size() == 0) {
-            say("No tasks to list..."); 
-            say(line());
+            ui.showMessage("No tasks to list..."); 
+            ui.showLine();
             return;
         }
-        say("Here are your tasks: ");
+        ui.showMessage("Here are your tasks: ");
         for (int i = 0; i < tasks.size(); i++) {
-            say((i + 1) + ". " + tasks.get(i));
+            ui.showMessage((i + 1) + ". " + tasks.get(i));
         }
-        say(line());
+        ui.showLine();
     }
 
     public static void markTask(String command) {
-        say(line());
+        ui.showLine();
         try { 
             String args = command.substring(4).trim();
             if (args.isEmpty()) {
@@ -163,19 +162,19 @@ public class Amia {
             if (idx >= 0 && idx < tasks.size()) {
                 tasks.get(idx).markDone();
                 Storage.save(tasks);
-                say("I've marked the task as done!");
-                say("   " + tasks.get(idx));
+                ui.showMessage("I've marked the task as done!");
+                ui.showMessage("   " + tasks.get(idx));
             } else {
                 throw new AmiaException("... Invalid task number...");
             }
         } catch (AmiaException e) {
-            say(e.getMessage());
+            ui.showMessage(e.getMessage());
         }
-        say(line());
+        ui.showLine();
     }
 
     public static void unmarkTask(String command) {
-        say(line());
+        ui.showLine();
         try { 
             String args = command.substring(6).trim();
             if (args.isEmpty()) {
@@ -185,40 +184,32 @@ public class Amia {
             if (idx >= 0 && idx < tasks.size()) {
                 tasks.get(idx).markUndone();
                 Storage.save(tasks);
-                say("I've marked the task as not done yet.");
-                say("   " + tasks.get(idx));
+                ui.showMessage("I've marked the task as not done yet.");
+                ui.showMessage("   " + tasks.get(idx));
             } else {
                 throw new AmiaException("... Invalid task number...");
             }
         } catch (AmiaException e) {
-            say(e.getMessage());
+            ui.showMessage(e.getMessage());
         }
-        say(line());
+        ui.showLine();
     }
 
     public static void start() {
-        say(line());
+        ui.showLine();
         try {
             tasks = Storage.load();
         } catch (AmiaException e) {
-            say(e.getMessage());
+            ui.showMessage(e.getMessage());
         }
-        say("Hello! I'm Amia!");
-        say("What can I do for you?");
-        say(line());
+        ui.showMessage("Hello! I'm Amia!");
+        ui.showMessage("What can I do for you?");
+        ui.showLine();
     }
 
     public static void exit() {
-        say(line());
-        say("Bye!");
-        say(line());
+        ui.showGoodbye();
     }
 
-    public static void say(String s) {
-        System.out.println("\t" + s);
-    }
-
-    public static String line() {
-        return "-----------------------------------";
-    }
+    
 }
