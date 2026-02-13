@@ -16,8 +16,8 @@ import amia.ui.Ui;
  * application loop and task management operations.
  */
 public class Amia {
-    private static int MAX_TASKS = 100;
-    private static String FILE_PATH = "./data/amia.txt";
+    private static final int MAX_TASKS = 100;
+    private static final String FILE_PATH = "./data/amia.txt";
 
     private static TaskList tasks = new TaskList();
     private static Ui ui = new Ui();
@@ -94,10 +94,10 @@ public class Amia {
                     task = new ToDo(desc);
                 } else if (command.startsWith("deadline")) {
                     Parser.DeadlineInfo info = Parser.parseDeadline(command);
-                    task = new Deadline(info.description, info.deadline);
+                    task = new Deadline(info.getDescription(), info.getDeadline());
                 } else if (command.startsWith("event")) {
                     Parser.EventInfo info = Parser.parseEvent(command);
-                    task = new Event(info.description, info.from, info.to);
+                    task = new Event(info.getDescription(), info.getFrom(), info.getTo());
                 } else {
                     task = new ToDo(command);
                 }
