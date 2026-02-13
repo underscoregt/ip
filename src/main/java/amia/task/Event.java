@@ -7,12 +7,12 @@ import java.time.format.DateTimeParseException;
 import amia.exception.AmiaException;
 
 public class Event extends Task {
-    private LocalDateTime from;
-    private LocalDateTime to;
-
     private static final DateTimeFormatter INPUT_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
     private static final DateTimeFormatter OUTPUT_FORMAT = DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma");
     private static final DateTimeFormatter FILE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+
+    private LocalDateTime from;
+    private LocalDateTime to;
 
     public Event(String description, String fromStr, String toStr) throws AmiaException {
         super(description);
