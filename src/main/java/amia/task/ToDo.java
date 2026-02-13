@@ -1,5 +1,6 @@
 package amia.task;
-public class ToDo extends Task{
+
+public class ToDo extends Task {
     public ToDo(String decsription) {
         super(decsription);
     }

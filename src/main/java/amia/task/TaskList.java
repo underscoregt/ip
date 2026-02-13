@@ -1,4 +1,5 @@
 package amia.task;
+
 import java.util.ArrayList;
 
 import amia.exception.AmiaException;
@@ -19,7 +20,7 @@ public class TaskList {
             throw new AmiaException("... Invalid task number...");
         }
     }
-    
+
     public void add(Task task) throws AmiaException {
         if (task == null) {
             throw new AmiaException("...Cannot add null task ...");

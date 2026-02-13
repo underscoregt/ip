@@ -1,5 +1,4 @@
 package amia;
-import java.util.ArrayList;
 
 import amia.exception.AmiaException;
 import amia.parser.CommandType;
@@ -31,30 +30,30 @@ public class Amia {
             try {
                 String command = ui.readCommand();
                 CommandType cmdType = Parser.parseCommandType(command);
-                
+
                 switch (cmdType) {
-                    case TODO:
-                    case DEADLINE:
-                    case EVENT:
-                        addTask(command);
-                        break;
-                    case MARK:
-                        markTask(command);
-                        break;
-                    case UNMARK:
-                        unmarkTask(command);
-                        break;
-                    case DELETE:
-                        deleteTask(command);
-                        break;
-                    case LIST:
-                        listTask();
-                        break;
-                    case BYE:
-                        ui.close();
-                        return;
-                    case UNKNOWN:
-                        throw new AmiaException("...?");
+                case TODO:
+                case DEADLINE:
+                case EVENT:
+                    addTask(command);
+                    break;
+                case MARK:
+                    markTask(command);
+                    break;
+                case UNMARK:
+                    unmarkTask(command);
+                    break;
+                case DELETE:
+                    deleteTask(command);
+                    break;
+                case LIST:
+                    listTask();
+                    break;
+                case BYE:
+                    ui.close();
+                    return;
+                case UNKNOWN:
+                    throw new AmiaException("...?");
                 }
             } catch (AmiaException e) {
                 ui.showLine();
@@ -67,7 +66,7 @@ public class Amia {
     public static void addTask(String command) {
         ui.showLine();
         try {
-                if (tasks.size() < MAX_TASKS) {
+            if (tasks.size() < MAX_TASKS) {
                 Task task;
                 if (command.startsWith("todo")) {
                     String desc = Parser.extractDescription(command, "todo");
@@ -116,7 +115,7 @@ public class Amia {
         ui.showLine();
         try {
             if (tasks.size() == 0) {
-                ui.showMessage("No tasks to list..."); 
+                ui.showMessage("No tasks to list...");
                 ui.showLine();
                 return;
             }
@@ -176,5 +175,4 @@ public class Amia {
         ui.showGoodbye();
     }
 
-    
 }
