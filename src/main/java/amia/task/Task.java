@@ -60,14 +60,6 @@ public abstract class Task {
         return !needle.isEmpty() && description.toLowerCase().contains(needle);
     }
 
-    public boolean matches(String keyword) {
-        if (keyword == null) {
-            return false;
-        }
-        String needle = keyword.trim().toLowerCase();
-        return !needle.isEmpty() && description.toLowerCase().contains(needle);
-    }
-
     /**
      * Returns the file representation of this task for storage purposes.
      *
