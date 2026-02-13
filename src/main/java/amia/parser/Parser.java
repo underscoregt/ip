@@ -2,8 +2,18 @@ package amia.parser;
 
 import amia.exception.AmiaException;
 
+/**
+ * Parses user commands and extracts relevant information.
+ */
 public class Parser {
 
+    /**
+     * Parses a command string and returns the corresponding CommandType.
+     *
+     * @param input The command string to parse.
+     * @return The CommandType corresponding to the input.
+     * @throws AmiaException If the input is null, empty, or unknown.
+     */
     public static CommandType parseCommandType(String input) throws AmiaException {
         if (input == null || input.trim().isEmpty()) {
             throw new AmiaException("...?");
@@ -12,6 +22,14 @@ public class Parser {
         return cmdType;
     }
 
+    /**
+     * Extracts the description from a command by removing the keyword prefix.
+     *
+     * @param command The full command string.
+     * @param keyword The keyword prefix to remove (e.g., "todo", "deadline").
+     * @return The extracted description.
+     * @throws AmiaException If the description is empty.
+     */
     public static String extractDescription(String command, String keyword) throws AmiaException {
         String desc = command.substring(keyword.length()).trim();
         if (desc.isEmpty()) {
@@ -20,6 +38,14 @@ public class Parser {
         return desc;
     }
 
+    /**
+     * Extracts the index argument from a command by removing the keyword prefix.
+     *
+     * @param command The full command string.
+     * @param keyword The keyword prefix to remove (e.g., "mark", "delete").
+     * @return The extracted index argument as a string.
+     * @throws AmiaException If the argument is empty.
+     */
     public static String extractIndexArg(String command, String keyword) throws AmiaException {
         String args = command.substring(keyword.length()).trim();
         if (args.isEmpty()) {

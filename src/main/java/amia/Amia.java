@@ -11,6 +11,10 @@ import amia.task.TaskList;
 import amia.task.ToDo;
 import amia.ui.Ui;
 
+/**
+ * Main application class for the Amia task manager. Handles the main
+ * application loop and task management operations.
+ */
 public class Amia {
     private static int MAX_TASKS = 100;
     private static String FILE_PATH = "./data/amia.txt";
@@ -19,12 +23,20 @@ public class Amia {
     private static Ui ui = new Ui();
     private static Storage storage = new Storage(FILE_PATH);
 
+    /**
+     * Starts the application and runs the main loop.
+     *
+     * @param args Command line arguments (unused).
+     */
     public static void main(String[] args) {
         start();
         loop();
         exit();
     }
 
+    /**
+     * Continuously reads user commands and processes them until the user exits.
+     */
     public static void loop() {
         while (true) {
             try {
@@ -63,6 +75,12 @@ public class Amia {
         }
     }
 
+    /**
+     * Adds a new task to the task list based on the command provided. Supports
+     * todo, deadline, and event task types.
+     *
+     * @param command The command string containing task type and details.
+     */
     public static void addTask(String command) {
         ui.showLine();
         try {
@@ -95,6 +113,11 @@ public class Amia {
         ui.showLine();
     }
 
+    /**
+     * Deletes a task from the task list based on the index provided in the command.
+     *
+     * @param command The delete command containing the task index.
+     */
     public static void deleteTask(String command) {
         ui.showLine();
         try {
@@ -111,6 +134,9 @@ public class Amia {
         ui.showLine();
     }
 
+    /**
+     * Displays all tasks in the task list.
+     */
     public static void listTask() {
         ui.showLine();
         try {
@@ -129,6 +155,11 @@ public class Amia {
         ui.showLine();
     }
 
+    /**
+     * Marks a task as done based on the index provided in the command.
+     *
+     * @param command The mark command containing the task index.
+     */
     public static void markTask(String command) {
         ui.showLine();
         try {
@@ -144,6 +175,11 @@ public class Amia {
         ui.showLine();
     }
 
+    /**
+     * Marks a task as not done based on the index provided in the command.
+     *
+     * @param command The unmark command containing the task index.
+     */
     public static void unmarkTask(String command) {
         ui.showLine();
         try {
@@ -159,6 +195,10 @@ public class Amia {
         ui.showLine();
     }
 
+    /**
+     * Initializes the application by loading previously saved tasks and displaying
+     * a welcome message.
+     */
     public static void start() {
         ui.showLine();
         try {
@@ -171,6 +211,9 @@ public class Amia {
         ui.showLine();
     }
 
+    /**
+     * Displays the goodbye message when the application exits.
+     */
     public static void exit() {
         ui.showGoodbye();
     }

@@ -4,23 +4,47 @@ import java.util.ArrayList;
 
 import amia.exception.AmiaException;
 
+/**
+ * Manages a list of tasks. Provides methods to add, remove, retrieve, and mark
+ * tasks.
+ */
 public class TaskList {
     private ArrayList<Task> tasks;
 
+    /**
+     * Constructs an empty TaskList.
+     */
     public TaskList() {
         this.tasks = new ArrayList<>();
     }
 
+    /**
+     * Constructs a TaskList with the given list of tasks.
+     *
+     * @param tasks The initial list of tasks.
+     */
     public TaskList(ArrayList<Task> tasks) {
         this.tasks = tasks;
     }
 
+    /**
+     * Validates that the given index is within the bounds of the task list.
+     *
+     * @param idx The index to validate.
+     * @throws AmiaException If the index is out of bounds.
+     */
     public void validateIndex(int idx) throws AmiaException {
         if (idx < 0 || idx >= tasks.size()) {
             throw new AmiaException("... Invalid task number...");
         }
     }
 
+    /**
+     * Adds a task to the task list.
+     *
+     * @param task The task to add.
+     * @throws AmiaException If the task is null.
+     */
     public void add(Task task) throws AmiaException {
         if (task == null) {
             throw new AmiaException("...Cannot add null task ...");
@@ -28,30 +52,66 @@ public class TaskList {
         tasks.add(task);
     }
 
+    /**
+     * Removes and returns the task at the given index.
+     *
+     * @param idx The index of the task to remove.
+     * @return The removed task.
+     * @throws AmiaException If the index is out of bounds.
+     */
     public Task remove(int idx) throws AmiaException {
         validateIndex(idx);
         return tasks.remove(idx);
     }
 
+    /**
+     * Retrieves the task at the given index.
+     *
+     * @param idx The index of the task to retrieve.
+     * @return The task at the specified index.
+     * @throws AmiaException If the index is out of bounds.
+     */
     public Task get(int idx) throws AmiaException {
         validateIndex(idx);
         return tasks.get(idx);
     }
 
+    /**
+     * Marks the task at the given index as done.
+     *
+     * @param idx The index of the task to mark as done.
+     * @throws AmiaException If the index is out of bounds.
+     */
     public void markDone(int idx) throws AmiaException {
         validateIndex(idx);
         tasks.get(idx).markDone();
     }
 
+    /**
+     * Marks the task at the given index as not done.
+     *
+     * @param idx The index of the task to mark as not done.
+     * @throws AmiaException If the index is out of bounds.
+     */
     public void markUndone(int idx) throws AmiaException {
         validateIndex(idx);
         tasks.get(idx).markUndone();
     }
 
+    /**
+     * Returns the number of tasks in the task list.
+     *
+     * @return The size of the task list.
+     */
     public int size() {
         return tasks.size();
     }
 
+    /**
+     * Returns the underlying ArrayList of tasks.
+     *
+     * @return The ArrayList of tasks.
+     */
     public ArrayList<Task> toArrayList() {
         return tasks;
     }

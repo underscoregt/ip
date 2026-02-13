@@ -11,15 +11,31 @@ import amia.task.Event;
 import amia.task.Task;
 import amia.task.ToDo;
 
+/**
+ * Handles loading and saving tasks to a file.
+ */
 public class Storage {
     private final String filePath;
     private static final DateTimeFormatter INPUT_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
     private static final DateTimeFormatter FILE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
+    /**
+     * Constructs a Storage object with the given file path. Uses a default path if
+     * the given path is null or empty.
+     *
+     * @param filePath The path to the file where tasks will be saved.
+     */
     public Storage(String filePath) {
         this.filePath = filePath == null || filePath.isEmpty() ? "./data/amia.txt" : filePath;
     }
 
+    /**
+     * Loads tasks from the storage file. Returns an empty list if the file does not
+     * exist.
+     *
+     * @return An ArrayList of tasks loaded from the file.
+     * @throws AmiaException If an error occurs while reading the file.
+     */
     public ArrayList<Task> load() throws AmiaException {
         ArrayList<Task> tasks = new ArrayList<>();
 
@@ -65,6 +81,12 @@ public class Storage {
         return tasks;
     }
 
+    /**
+     * Saves tasks to the storage file. Creates the directory if it does not exist.
+     *
+     * @param tasks The ArrayList of tasks to save.
+     * @throws AmiaException If an error occurs while writing to the file.
+     */
     public void save(ArrayList<Task> tasks) throws AmiaException {
         try {
             File dir = new File(new File(filePath).getParent());
