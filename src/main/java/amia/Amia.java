@@ -49,6 +49,9 @@ public class Amia {
                 case LIST:
                     listTask();
                     break;
+                case FIND:
+                    findTask(command);
+                    break;
                 case BYE:
                     ui.close();
                     return;
@@ -122,6 +125,28 @@ public class Amia {
             ui.showMessage("Here are your tasks: ");
             for (int i = 0; i < tasks.size(); i++) {
                 ui.showMessage((i + 1) + ". " + tasks.get(i));
+            }
+        } catch (AmiaException e) {
+            ui.showMessage(e.getMessage());
+        }
+        ui.showLine();
+    }
+
+    public static void findTask(String command) {
+        ui.showLine();
+        try {
+            String keyword = Parser.extractDescription(command, "find");
+            boolean foundAny = false;
+            ui.showMessage("Here are the matching tasks:");
+            for (int i = 0; i < tasks.size(); i++) {
+                Task task = tasks.get(i);
+                if (task.matches(keyword)) {
+                    ui.showMessage((i + 1) + ". " + task);
+                    foundAny = true;
+                }
+            }
+            if (!foundAny) {
+                ui.showMessage("No matching tasks found.");
             }
         } catch (AmiaException e) {
             ui.showMessage(e.getMessage());
