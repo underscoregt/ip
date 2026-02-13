@@ -76,24 +76,44 @@ public class Parser {
     }
 
     public static class DeadlineInfo {
-        public String description;
-        public String deadline;
+        private String description;
+        private String deadline;
 
         public DeadlineInfo(String description, String deadline) {
             this.description = description;
             this.deadline = deadline;
         }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getDeadline() {
+            return deadline;
+        }
     }
 
     public static class EventInfo {
-        public String description;
-        public String from;
-        public String to;
+        private String description;
+        private String from;
+        private String to;
 
         public EventInfo(String description, String from, String to) {
             this.description = description;
             this.from = from;
             this.to = to;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getFrom() {
+            return from;
+        }
+
+        public String getTo() {
+            return to;
         }
     }
 }
