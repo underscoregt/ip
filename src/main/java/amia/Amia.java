@@ -158,6 +158,12 @@ public class Amia {
         ui.showLine();
     }
 
+    /*
+     * Finds tasks containing a keyword provided in the command.
+     *
+     * @param command The find cmomand containing the keyword.
+     */
+    public static void findTask(String command) {
         ui.showLine();
         try {
             String keyword = Parser.extractDescription(command, "find");
@@ -179,7 +185,7 @@ public class Amia {
         ui.showLine();
     }
 
-
+    /*
      * Marks a task as done based on the index provided in the command.
      *
      * @param command The mark command containing the task index.
