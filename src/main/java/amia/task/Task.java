@@ -52,6 +52,12 @@ public abstract class Task {
         return "[" + getStatusIcon() + "] " + description;
     }
 
+    /**
+     * Checks whether the task description contains the given keyword.
+     *
+     * @param keyword The keyword to search for.
+     * @return True if the keyword matches; false otherwise.
+     */
     public boolean matches(String keyword) {
         if (keyword == null) {
             return false;
