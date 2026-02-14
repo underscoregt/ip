@@ -20,9 +20,9 @@ import amia.task.ToDo;
  * Handles loading and saving tasks to a file.
  */
 public class Storage {
-    private final String filePath;
     private static final DateTimeFormatter INPUT_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
     private static final DateTimeFormatter FILE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+    private final String filePath;
 
     /**
      * Constructs a Storage object with the given file path. Uses a default path if
