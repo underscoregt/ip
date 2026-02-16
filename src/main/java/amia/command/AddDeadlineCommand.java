@@ -13,7 +13,6 @@ import amia.ui.Ui;
  * Represents a command to add a Deadline task to the task list.
  */
 public class AddDeadlineCommand extends Command {
-    private static final int MAX_TASKS = 100;
     private String commandText;
 
     /**
@@ -28,7 +27,7 @@ public class AddDeadlineCommand extends Command {
     @Override
     public String execute(TaskList tasks, Ui ui, Storage storage) {
         try {
-            if (tasks.size() >= MAX_TASKS) {
+            if (tasks.size() >= TaskList.MAX_TASKS) {
                 throw new AmiaException(ErrorMessages.TASK_LIST_FULL);
             }
 

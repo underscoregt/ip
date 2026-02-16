@@ -10,6 +10,7 @@ import amia.exception.ErrorMessages;
  * tasks.
  */
 public class TaskList {
+    public static final int MAX_TASKS = 100;
     private ArrayList<Task> tasks;
 
     /**
