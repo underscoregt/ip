@@ -71,10 +71,7 @@ public class Amia {
      */
     public String getResponse(String input) {
         try {
-            Command command = Parser.parse(input);
-            String response = command.execute(tasks, ui, storage);
-            isExit = command.isExit();
-            return response;
+            return executeCommand(input);
         } catch (AmiaException e) {
             return e.getMessage();
         }
@@ -94,26 +91,60 @@ public class Amia {
      * Used by the CLI.
      */
     public void loop() {
-        while (true) {
-            try {
-                String input = ui.readCommand();
-                Command command = Parser.parse(input);
-                String response = command.execute(tasks, ui, storage);
-
-                ui.showLine();
-                ui.showMessage(response);
-                ui.showLine();
-
-                if (command.isExit()) {
-                    ui.close();
-                    return;
-                }
-            } catch (Exception e) {
-                ui.showLine();
-                ui.showMessage(e.getMessage());
-                ui.showLine();
-            }
+        while (!shouldExit()) {
+            processOneCommand();
         }
+        ui.close();
+    }
+
+    /**
+     * Processes a single command from the user in the CLI. Reads input, executes
+     * the command, and displays the result.
+     */
+    private void processOneCommand() {
+        try {
+            String input = ui.readCommand();
+            String response = getResponse(input);
+            displayResponse(response);
+        } catch (Exception e) {
+            displayError(e.getMessage());
+        }
+    }
+
+    /**
+     * Executes a parsed command and updates exit state.
+     *
+     * @param input The user's command string.
+     * @return The response string from command execution.
+     * @throws AmiaException If parsing or execution fails.
+     */
+    private String executeCommand(String input) throws AmiaException {
+        Command command = Parser.parse(input);
+        String response = command.execute(tasks, ui, storage);
+        isExit = command.isExit();
+        return response;
+    }
+
+    /**
+     * Displays a response message with formatting lines.
+     *
+     * @param response The message to display.
+     */
+    private void displayResponse(String response) {
+        ui.showLine();
+        ui.showMessage(response);
+        ui.showLine();
+    }
+
+    /**
+     * Displays an error message with formatting lines.
+     *
+     * @param errorMessage The error message to display.
+     */
+    private void displayError(String errorMessage) {
+        ui.showLine();
+        ui.showMessage(errorMessage);
+        ui.showLine();
     }
 
     /**
