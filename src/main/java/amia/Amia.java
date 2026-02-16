@@ -33,11 +33,13 @@ public class Amia {
     public Amia() {
         this.storage = new Storage(null);
         this.ui = new Ui();
+        assert this.storage != null && this.ui != null : "Storage and UI must be initialized";
         try {
             this.tasks = new TaskList(storage.load());
         } catch (AmiaException e) {
             this.tasks = new TaskList();
         }
+        assert this.tasks != null : "Tasks must be initialized";
     }
 
     /**
@@ -48,11 +50,13 @@ public class Amia {
     public Amia(String filePath) {
         this.storage = new Storage(filePath);
         this.ui = new Ui();
+        assert this.storage != null && this.ui != null : "Storage and UI must be initialized";
         try {
             this.tasks = new TaskList(storage.load());
         } catch (AmiaException e) {
             this.tasks = new TaskList();
         }
+        assert this.tasks != null : "Tasks must be initialized";
     }
 
     /**
@@ -75,6 +79,7 @@ public class Amia {
      * @throws AmiaException If parsing fails.
      */
     private Command parseCommand(String input) throws AmiaException {
+        assert input != null : "Input cannot be null";
         CommandType cmdType = Parser.parseCommandType(input);
 
         switch (cmdType) {
@@ -107,8 +112,10 @@ public class Amia {
      * @return The response string to display.
      */
     public String getResponse(String input) {
+        assert input != null : "Input cannot be null";
         try {
             Command command = parseCommand(input);
+            assert command != null : "Command should not be null";
             String response = command.execute(tasks, ui, storage);
             isExit = command.isExit();
             return response;

@@ -23,6 +23,7 @@ public class MarkCommand extends Command {
 
     @Override
     public String execute(TaskList tasks, Ui ui, Storage storage) {
+        assert tasks != null && storage != null : "Tasks and storage cannot be null";
         try {
             String args = Parser.extractIndexArg(commandText, "mark");
             int idx = Parser.parseIndex(args);

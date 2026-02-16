@@ -28,6 +28,7 @@ public class AddCommand extends Command {
 
     @Override
     public String execute(TaskList tasks, Ui ui, Storage storage) {
+        assert tasks != null && storage != null : "Tasks and storage cannot be null";
         try {
             if (tasks.size() >= MAX_TASKS) {
                 throw new AmiaException("... The task list is full...");

@@ -24,6 +24,7 @@ public class TaskList {
      * @param tasks The initial list of tasks.
      */
     public TaskList(ArrayList<Task> tasks) {
+        assert tasks != null : "Task list cannot be null";
         this.tasks = tasks;
     }
 
@@ -61,7 +62,9 @@ public class TaskList {
      */
     public Task remove(int idx) throws AmiaException {
         validateIndex(idx);
-        return tasks.remove(idx);
+        Task removed = tasks.remove(idx);
+        assert removed != null : "Removed task should not be null";
+        return removed;
     }
 
     /**

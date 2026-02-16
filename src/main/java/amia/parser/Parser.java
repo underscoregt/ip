@@ -31,6 +31,7 @@ public class Parser {
      * @throws AmiaException If the description is empty.
      */
     public static String extractDescription(String command, String keyword) throws AmiaException {
+        assert command != null && keyword != null : "Command and keyword cannot be null";
         String desc = command.substring(keyword.length()).trim();
         if (desc.isEmpty()) {
             throw new AmiaException("... The description of a task cannot be empty...");
