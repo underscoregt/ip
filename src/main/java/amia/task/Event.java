@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 import amia.exception.AmiaException;
+import amia.exception.ErrorMessages;
 
 /**
  * Represents an event task with a start and end time.
@@ -31,7 +32,7 @@ public class Event extends Task {
             this.from = LocalDateTime.parse(fromStr, INPUT_FORMAT);
             this.to = LocalDateTime.parse(toStr, INPUT_FORMAT);
         } catch (DateTimeParseException e) {
-            throw new AmiaException("...Invalid date/time format. Use yyyy-MM-dd HHmm");
+            throw new AmiaException(ErrorMessages.INVALID_DATETIME_FORMAT);
         }
     }
 

@@ -3,6 +3,7 @@ package amia.task;
 import java.util.ArrayList;
 
 import amia.exception.AmiaException;
+import amia.exception.ErrorMessages;
 
 /**
  * Manages a list of tasks. Provides methods to add, remove, retrieve, and mark
@@ -35,7 +36,7 @@ public class TaskList {
      */
     public void validateIndex(int index) throws AmiaException {
         if (index < 0 || index >= tasks.size()) {
-            throw new AmiaException("... Invalid task number...");
+            throw new AmiaException(ErrorMessages.INVALID_TASK_NUMBER);
         }
     }
 
@@ -47,7 +48,7 @@ public class TaskList {
      */
     public void add(Task task) throws AmiaException {
         if (task == null) {
-            throw new AmiaException("...Cannot add null task ...");
+            throw new AmiaException(ErrorMessages.NULL_TASK);
         }
         tasks.add(task);
     }

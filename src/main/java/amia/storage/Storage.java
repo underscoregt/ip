@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import amia.exception.AmiaException;
+import amia.exception.ErrorMessages;
 import amia.task.Deadline;
 import amia.task.Event;
 import amia.task.Task;
@@ -112,7 +113,7 @@ public class Storage {
                 tasks.add(task);
             }
         } catch (IOException e) {
-            throw new AmiaException("... I can't load the saved tasks...");
+            throw new AmiaException(ErrorMessages.CANNOT_LOAD_TASKS);
         }
 
         return tasks;
@@ -138,7 +139,7 @@ public class Storage {
                 }
             }
         } catch (IOException e) {
-            throw new AmiaException("... I can't save the tasks...");
+            throw new AmiaException(ErrorMessages.CANNOT_SAVE_TASKS);
         }
     }
 }

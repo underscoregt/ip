@@ -12,6 +12,7 @@ import amia.command.MarkCommand;
 import amia.command.UnknownCommand;
 import amia.command.UnmarkCommand;
 import amia.exception.AmiaException;
+import amia.exception.ErrorMessages;
 
 /**
  * Parses user commands and extracts relevant information.
@@ -62,7 +63,7 @@ public class Parser {
      */
     public static CommandType parseCommandType(String input) throws AmiaException {
         if (input == null || input.trim().isEmpty()) {
-            throw new AmiaException("...?");
+            throw new AmiaException(ErrorMessages.EMPTY_INPUT);
         }
         CommandType commandType = CommandType.fromString(input.trim().toLowerCase());
         return commandType;
@@ -79,7 +80,7 @@ public class Parser {
     public static String extractDescription(String command, String keyword) throws AmiaException {
         String description = command.substring(keyword.length()).trim();
         if (description.isEmpty()) {
-            throw new AmiaException("... The description of a task cannot be empty...");
+            throw new AmiaException(ErrorMessages.EMPTY_DESCRIPTION);
         }
         return description;
     }
@@ -95,7 +96,7 @@ public class Parser {
     public static String extractIndexArgument(String command, String keyword) throws AmiaException {
         String arguments = command.substring(keyword.length()).trim();
         if (arguments.isEmpty()) {
-            throw new AmiaException("... Invalid format... Use: " + keyword + " <index>");
+            throw new AmiaException(ErrorMessages.invalidIndexFormat(keyword));
         }
         return arguments;
     }
@@ -111,7 +112,7 @@ public class Parser {
         try {
             return Integer.parseInt(indexStr) - 1;
         } catch (NumberFormatException e) {
-            throw new AmiaException("... Invalid task number...");
+            throw new AmiaException(ErrorMessages.INVALID_TASK_NUMBER);
         }
     }
 
@@ -126,15 +127,15 @@ public class Parser {
         String arguments = command.substring(8).trim();
         int deadlineIndex = arguments.lastIndexOf("/by");
         if (deadlineIndex == -1 || arguments.isEmpty()) {
-            throw new AmiaException("Invalid format... Use: deadline <desc> /by <date>");
+            throw new AmiaException(ErrorMessages.INVALID_DEADLINE_FORMAT);
         }
         String description = arguments.substring(0, deadlineIndex).trim();
         String deadline = arguments.substring(deadlineIndex + 3).trim();
         if (description.isEmpty()) {
-            throw new AmiaException("... The description of a task can't be empty...");
+            throw new AmiaException(ErrorMessages.EMPTY_DESCRIPTION);
         }
         if (deadline.isEmpty()) {
-            throw new AmiaException("... The deadline can't be empty...");
+            throw new AmiaException(ErrorMessages.EMPTY_DEADLINE);
         }
         return new DeadlineInfo(description, deadline);
     }
@@ -152,19 +153,19 @@ public class Parser {
         int fromIndex = arguments.lastIndexOf("/from");
         int toIndex = arguments.lastIndexOf("/to");
         if (fromIndex == -1 || toIndex == -1 || arguments.isEmpty()) {
-            throw new AmiaException("Invalid format... Use: event <desc> /from <start> /to <end>");
+            throw new AmiaException(ErrorMessages.INVALID_EVENT_FORMAT);
         }
         String description = arguments.substring(0, fromIndex).trim();
         String from = arguments.substring(fromIndex + 5, toIndex).trim();
         String to = arguments.substring(toIndex + 3).trim();
         if (description.isEmpty()) {
-            throw new AmiaException("...The description of a task can't be empty...");
+            throw new AmiaException(ErrorMessages.EMPTY_DESCRIPTION);
         }
         if (from.isEmpty()) {
-            throw new AmiaException("... The start time can't be empty...");
+            throw new AmiaException(ErrorMessages.EMPTY_START_TIME);
         }
         if (to.isEmpty()) {
-            throw new AmiaException("... The end time can't be empty...");
+            throw new AmiaException(ErrorMessages.EMPTY_END_TIME);
         }
         return new EventInfo(description, from, to);
     }

@@ -1,6 +1,7 @@
 package amia.command;
 
 import amia.exception.AmiaException;
+import amia.exception.ErrorMessages;
 import amia.parser.Parser;
 import amia.storage.Storage;
 import amia.task.Task;
@@ -28,7 +29,7 @@ public class AddTodoCommand extends Command {
     public String execute(TaskList tasks, Ui ui, Storage storage) {
         try {
             if (tasks.size() >= MAX_TASKS) {
-                throw new AmiaException("... The task list is full...");
+                throw new AmiaException(ErrorMessages.TASK_LIST_FULL);
             }
 
             String description = Parser.extractDescription(commandText, "todo");
