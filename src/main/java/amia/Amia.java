@@ -1,16 +1,7 @@
 package amia;
 
-import amia.command.AddCommand;
 import amia.command.Command;
-import amia.command.DeleteCommand;
-import amia.command.ExitCommand;
-import amia.command.FindCommand;
-import amia.command.ListCommand;
-import amia.command.MarkCommand;
-import amia.command.UnknownCommand;
-import amia.command.UnmarkCommand;
 import amia.exception.AmiaException;
-import amia.parser.CommandType;
 import amia.parser.Parser;
 import amia.storage.Storage;
 import amia.task.TaskList;
@@ -68,39 +59,6 @@ public class Amia {
     }
 
     /**
-     * Parses a command string and returns the appropriate Command object.
-     *
-     * @param input The user's input string.
-     * @return The Command object to execute.
-     * @throws AmiaException If parsing fails.
-     */
-    private Command parseCommand(String input) throws AmiaException {
-        CommandType cmdType = Parser.parseCommandType(input);
-
-        switch (cmdType) {
-        case TODO:
-        case DEADLINE:
-        case EVENT:
-            return new AddCommand(input);
-        case MARK:
-            return new MarkCommand(input);
-        case UNMARK:
-            return new UnmarkCommand(input);
-        case DELETE:
-            return new DeleteCommand(input);
-        case LIST:
-            return new ListCommand();
-        case FIND:
-            return new FindCommand(input);
-        case BYE:
-            return new ExitCommand();
-        case UNKNOWN:
-        default:
-            return new UnknownCommand();
-        }
-    }
-
-    /**
      * Generates a response for the user's input. Used by the GUI.
      *
      * @param input The user's command.
@@ -108,7 +66,7 @@ public class Amia {
      */
     public String getResponse(String input) {
         try {
-            Command command = parseCommand(input);
+            Command command = Parser.parse(input);
             String response = command.execute(tasks, ui, storage);
             isExit = command.isExit();
             return response;
@@ -134,7 +92,7 @@ public class Amia {
         while (true) {
             try {
                 String input = ui.readCommand();
-                Command command = parseCommand(input);
+                Command command = Parser.parse(input);
                 String response = command.execute(tasks, ui, storage);
 
                 ui.showLine();
