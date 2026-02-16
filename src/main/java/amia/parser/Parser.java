@@ -1,6 +1,8 @@
 package amia.parser;
 
-import amia.command.AddCommand;
+import amia.command.AddDeadlineCommand;
+import amia.command.AddEventCommand;
+import amia.command.AddTodoCommand;
 import amia.command.Command;
 import amia.command.DeleteCommand;
 import amia.command.ExitCommand;
@@ -28,9 +30,11 @@ public class Parser {
 
         switch (commandType) {
         case TODO:
+            return new AddTodoCommand(input);
         case DEADLINE:
+            return new AddDeadlineCommand(input);
         case EVENT:
-            return new AddCommand(input);
+            return new AddEventCommand(input);
         case MARK:
             return new MarkCommand(input);
         case UNMARK:
