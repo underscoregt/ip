@@ -120,12 +120,12 @@ public class Storage {
                 dir.mkdirs();
             }
 
-            BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
-            for (Task task : tasks) {
-                bw.write(task.toFileString());
-                bw.newLine();
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
+                for (Task task : tasks) {
+                    bw.write(task.toFileString());
+                    bw.newLine();
+                }
             }
-            bw.close();
         } catch (IOException e) {
             throw new AmiaException("... I can't save the tasks...");
         }
