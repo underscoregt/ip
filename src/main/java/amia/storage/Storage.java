@@ -75,6 +75,11 @@ public class Storage {
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(" \\| ");
 
+                // Skip malformed lines with insufficient data
+                if (parts.length < 3) {
+                    continue;
+                }
+
                 String type = parts[0];
                 boolean isDone = parts[1].equals("1");
 
@@ -84,9 +89,15 @@ public class Storage {
                     task = new ToDo(parts[2]);
                     break;
                 case "D":
+                    if (parts.length < 4) {
+                        continue;
+                    }
                     task = new Deadline(parts[2], LocalDateTime.parse(parts[3], FILE_FORMAT).format(INPUT_FORMAT));
                     break;
                 case "E":
+                    if (parts.length < 5) {
+                        continue;
+                    }
                     task = new Event(parts[2], LocalDateTime.parse(parts[3], FILE_FORMAT).format(INPUT_FORMAT),
                             LocalDateTime.parse(parts[4], FILE_FORMAT).format(INPUT_FORMAT));
                     break;
