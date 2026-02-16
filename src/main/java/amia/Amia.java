@@ -22,13 +22,7 @@ public class Amia {
      * and loads saved tasks.
      */
     public Amia() {
-        this.storage = new Storage(null);
-        this.ui = new Ui();
-        try {
-            this.tasks = new TaskList(storage.load());
-        } catch (AmiaException e) {
-            this.tasks = new TaskList();
-        }
+        this(null);
     }
 
     /**
@@ -39,10 +33,21 @@ public class Amia {
     public Amia(String filePath) {
         this.storage = new Storage(filePath);
         this.ui = new Ui();
+        this.tasks = loadTasks();
+        assert this.storage != null && this.ui != null : "Storage and UI must be initialized";
+        assert this.tasks != null : "Tasks must be initialized";
+    }
+
+    /**
+     * Loads tasks from storage, returning an empty TaskList if loading fails.
+     *
+     * @return The loaded TaskList or a new empty TaskList.
+     */
+    private TaskList loadTasks() {
         try {
-            this.tasks = new TaskList(storage.load());
+            return new TaskList(storage.load());
         } catch (AmiaException e) {
-            this.tasks = new TaskList();
+            return new TaskList();
         }
     }
 
