@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -26,12 +27,32 @@ public class Storage {
 
     /**
      * Constructs a Storage object with the given file path. Uses a default path if
-     * the given path is null or empty.
+     * the given path is null or empty. The default path is relative to the JAR file
+     * location.
      *
      * @param filePath The path to the file where tasks will be saved.
      */
     public Storage(String filePath) {
-        this.filePath = filePath == null || filePath.isEmpty() ? "./data/amia.txt" : filePath;
+        this.filePath = filePath == null || filePath.isEmpty() ? getDefaultFilePath() : filePath;
+    }
+
+    /**
+     * Gets the default file path relative to the JAR file location.
+     *
+     * @return The file path for storing tasks.
+     */
+    private static String getDefaultFilePath() {
+        try {
+            // Get the location of the JAR file
+            File jarFile = new File(Storage.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            // Get the directory containing the JAR
+            File jarDir = jarFile.isDirectory() ? jarFile : jarFile.getParentFile();
+            // Create the data file path relative to the JAR directory
+            return new File(jarDir, "data/amia.txt").getPath();
+        } catch (URISyntaxException e) {
+            // Fall back to current directory if unable to determine JAR location
+            return "./data/amia.txt";
+        }
     }
 
     /**

@@ -21,8 +21,6 @@ import amia.ui.Ui;
  * application loop and task management operations.
  */
 public class Amia {
-    private static final String FILE_PATH = "./data/amia.txt";
-
     private TaskList tasks;
     private Ui ui;
     private Storage storage;
@@ -33,7 +31,7 @@ public class Amia {
      * and loads saved tasks.
      */
     public Amia() {
-        this.storage = new Storage(FILE_PATH);
+        this.storage = new Storage(null);
         this.ui = new Ui();
         try {
             this.tasks = new TaskList(storage.load());
