@@ -18,7 +18,8 @@ public class ErrorMessages {
 
     // Deadline errors
     public static final String EMPTY_DEADLINE = "The deadline cannot be empty.";
-    public static final String INVALID_DEADLINE_FORMAT = "Invalid format. Use: deadline <description> /by <date>";
+    public static final String INVALID_DEADLINE_FORMAT =
+            "Invalid format. Use: deadline <description> /by <date>";
 
     // Event errors
     public static final String EMPTY_START_TIME = "The start time cannot be empty.";
