@@ -1,14 +1,19 @@
 package amia;
 
+import amia.command.AddCommand;
+import amia.command.Command;
+import amia.command.DeleteCommand;
+import amia.command.ExitCommand;
+import amia.command.FindCommand;
+import amia.command.ListCommand;
+import amia.command.MarkCommand;
+import amia.command.UnknownCommand;
+import amia.command.UnmarkCommand;
 import amia.exception.AmiaException;
 import amia.parser.CommandType;
 import amia.parser.Parser;
 import amia.storage.Storage;
-import amia.task.Deadline;
-import amia.task.Event;
-import amia.task.Task;
 import amia.task.TaskList;
-import amia.task.ToDo;
 import amia.ui.Ui;
 
 /**
@@ -16,12 +21,41 @@ import amia.ui.Ui;
  * application loop and task management operations.
  */
 public class Amia {
-    private static final int MAX_TASKS = 100;
     private static final String FILE_PATH = "./data/amia.txt";
 
-    private static TaskList tasks = new TaskList();
-    private static Ui ui = new Ui();
-    private static Storage storage = new Storage(FILE_PATH);
+    private TaskList tasks;
+    private Ui ui;
+    private Storage storage;
+    private boolean isExit = false;
+
+    /**
+     * Constructs an Amia instance with default file path. Initializes storage, UI,
+     * and loads saved tasks.
+     */
+    public Amia() {
+        this.storage = new Storage(FILE_PATH);
+        this.ui = new Ui();
+        try {
+            this.tasks = new TaskList(storage.load());
+        } catch (AmiaException e) {
+            this.tasks = new TaskList();
+        }
+    }
+
+    /**
+     * Constructs an Amia instance for testing with custom file path.
+     *
+     * @param filePath The path to the data file.
+     */
+    public Amia(String filePath) {
+        this.storage = new Storage(filePath);
+        this.ui = new Ui();
+        try {
+            this.tasks = new TaskList(storage.load());
+        } catch (AmiaException e) {
+            this.tasks = new TaskList();
+        }
+    }
 
     /**
      * Starts the application and runs the main loop.
@@ -29,48 +63,91 @@ public class Amia {
      * @param args Command line arguments (unused).
      */
     public static void main(String[] args) {
-        start();
-        loop();
-        exit();
+        Amia amia = new Amia();
+        amia.start();
+        amia.loop();
+        amia.exit();
+    }
+
+    /**
+     * Parses a command string and returns the appropriate Command object.
+     *
+     * @param input The user's input string.
+     * @return The Command object to execute.
+     * @throws AmiaException If parsing fails.
+     */
+    private Command parseCommand(String input) throws AmiaException {
+        CommandType cmdType = Parser.parseCommandType(input);
+
+        switch (cmdType) {
+        case TODO:
+        case DEADLINE:
+        case EVENT:
+            return new AddCommand(input);
+        case MARK:
+            return new MarkCommand(input);
+        case UNMARK:
+            return new UnmarkCommand(input);
+        case DELETE:
+            return new DeleteCommand(input);
+        case LIST:
+            return new ListCommand();
+        case FIND:
+            return new FindCommand(input);
+        case BYE:
+            return new ExitCommand();
+        case UNKNOWN:
+        default:
+            return new UnknownCommand();
+        }
+    }
+
+    /**
+     * Generates a response for the user's input. Used by the GUI.
+     *
+     * @param input The user's command.
+     * @return The response string to display.
+     */
+    public String getResponse(String input) {
+        try {
+            Command command = parseCommand(input);
+            String response = command.execute(tasks, ui, storage);
+            isExit = command.isExit();
+            return response;
+        } catch (AmiaException e) {
+            return e.getMessage();
+        }
+    }
+
+    /**
+     * Checks if the last command was an exit command.
+     *
+     * @return true if the application should exit, false otherwise.
+     */
+    public boolean shouldExit() {
+        return isExit;
     }
 
     /**
      * Continuously reads user commands and processes them until the user exits.
+     * Used by the CLI.
      */
-    public static void loop() {
+    public void loop() {
         while (true) {
             try {
-                String command = ui.readCommand();
-                CommandType cmdType = Parser.parseCommandType(command);
+                String input = ui.readCommand();
+                Command command = parseCommand(input);
+                String response = command.execute(tasks, ui, storage);
 
-                switch (cmdType) {
-                case TODO:
-                case DEADLINE:
-                case EVENT:
-                    addTask(command);
-                    break;
-                case MARK:
-                    markTask(command);
-                    break;
-                case UNMARK:
-                    unmarkTask(command);
-                    break;
-                case DELETE:
-                    deleteTask(command);
-                    break;
-                case LIST:
-                    listTask();
-                    break;
-                case FIND:
-                    findTask(command);
-                    break;
-                case BYE:
+                ui.showLine();
+                ui.showMessage(response);
+                ui.showLine();
+
+                if (command.isExit()) {
                     ui.close();
                     return;
-                case UNKNOWN:
-                    throw new AmiaException("...?");
                 }
-            } catch (AmiaException e) {
+            } catch (Exception e) {
                 ui.showLine();
                 ui.showMessage(e.getMessage());
                 ui.showLine();
@@ -79,163 +156,10 @@ public class Amia {
     }
 
     /**
-     * Adds a new task to the task list based on the command provided. Supports
-     * todo, deadline, and event task types.
-     *
-     * @param command The command string containing task type and details.
+     * Initializes the application by displaying a welcome message.
      */
-    public static void addTask(String command) {
+    public void start() {
         ui.showLine();
-        try {
-            if (tasks.size() < MAX_TASKS) {
-                Task task;
-                if (command.startsWith("todo")) {
-                    String desc = Parser.extractDescription(command, "todo");
-                    task = new ToDo(desc);
-                } else if (command.startsWith("deadline")) {
-                    Parser.DeadlineInfo info = Parser.parseDeadline(command);
-                    task = new Deadline(info.getDescription(), info.getDeadline());
-                } else if (command.startsWith("event")) {
-                    Parser.EventInfo info = Parser.parseEvent(command);
-                    task = new Event(info.getDescription(), info.getFrom(), info.getTo());
-                } else {
-                    task = new ToDo(command);
-                }
-
-                tasks.add(task);
-                storage.save(tasks.toArrayList());
-                ui.showMessage("I've added this task!");
-                ui.showMessage("   " + task);
-                ui.showMessage("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
-            } else {
-                throw new AmiaException("... The task list is full...");
-            }
-        } catch (AmiaException e) {
-            ui.showMessage(e.getMessage());
-        }
-        ui.showLine();
-    }
-
-    /**
-     * Deletes a task from the task list based on the index provided in the command.
-     *
-     * @param command The delete command containing the task index.
-     */
-    public static void deleteTask(String command) {
-        ui.showLine();
-        try {
-            String args = Parser.extractIndexArg(command, "delete");
-            int idx = Parser.parseIndex(args);
-            Task removedTask = tasks.remove(idx);
-            storage.save(tasks.toArrayList());
-            ui.showMessage("I've removed this task:");
-            ui.showMessage("   " + removedTask);
-            ui.showMessage("You have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + ".");
-        } catch (AmiaException e) {
-            ui.showMessage(e.getMessage());
-        }
-        ui.showLine();
-    }
-
-    /**
-     * Displays all tasks in the task list.
-     */
-    public static void listTask() {
-        ui.showLine();
-        try {
-            if (tasks.size() == 0) {
-                ui.showMessage("No tasks to list...");
-                ui.showLine();
-                return;
-            }
-            ui.showMessage("Here are your tasks: ");
-            for (int i = 0; i < tasks.size(); i++) {
-                ui.showMessage((i + 1) + ". " + tasks.get(i));
-            }
-        } catch (AmiaException e) {
-            ui.showMessage(e.getMessage());
-        }
-        ui.showLine();
-    }
-
-    /*
-     * Finds tasks containing a keyword provided in the command.
-     *
-     * @param command The find cmomand containing the keyword.
-     */
-    public static void findTask(String command) {
-        ui.showLine();
-        try {
-            String keyword = Parser.extractDescription(command, "find");
-            boolean foundAny = false;
-            ui.showMessage("Here are the matching tasks:");
-            for (int i = 0; i < tasks.size(); i++) {
-                Task task = tasks.get(i);
-                if (task.matches(keyword)) {
-                    ui.showMessage((i + 1) + ". " + task);
-                    foundAny = true;
-                }
-            }
-            if (!foundAny) {
-                ui.showMessage("No matching tasks found.");
-            }
-        } catch (AmiaException e) {
-            ui.showMessage(e.getMessage());
-        }
-        ui.showLine();
-    }
-
-    /*
-     * Marks a task as done based on the index provided in the command.
-     *
-     * @param command The mark command containing the task index.
-     */
-    public static void markTask(String command) {
-        ui.showLine();
-        try {
-            String args = Parser.extractIndexArg(command, "mark");
-            int idx = Parser.parseIndex(args);
-            tasks.markDone(idx);
-            storage.save(tasks.toArrayList());
-            ui.showMessage("I've marked the task as done!");
-            ui.showMessage("   " + tasks.get(idx));
-        } catch (AmiaException e) {
-            ui.showMessage(e.getMessage());
-        }
-        ui.showLine();
-    }
-
-    /**
-     * Marks a task as not done based on the index provided in the command.
-     *
-     * @param command The unmark command containing the task index.
-     */
-    public static void unmarkTask(String command) {
-        ui.showLine();
-        try {
-            String args = Parser.extractIndexArg(command, "unmark");
-            int idx = Parser.parseIndex(args);
-            tasks.markUndone(idx);
-            storage.save(tasks.toArrayList());
-            ui.showMessage("I've marked the task as not done yet.");
-            ui.showMessage("   " + tasks.get(idx));
-        } catch (AmiaException e) {
-            ui.showMessage(e.getMessage());
-        }
-        ui.showLine();
-    }
-
-    /**
-     * Initializes the application by loading previously saved tasks and displaying
-     * a welcome message.
-     */
-    public static void start() {
-        ui.showLine();
-        try {
-            tasks = new TaskList(storage.load());
-        } catch (AmiaException e) {
-            ui.showMessage(e.getMessage());
-        }
         ui.showMessage("Hello! I'm Amia!");
         ui.showMessage("What can I do for you?");
         ui.showLine();
@@ -244,8 +168,7 @@ public class Amia {
     /**
      * Displays the goodbye message when the application exits.
      */
-    public static void exit() {
+    public void exit() {
         ui.showGoodbye();
     }
-
 }

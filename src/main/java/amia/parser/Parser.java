@@ -54,6 +54,13 @@ public class Parser {
         return args;
     }
 
+    /**
+     * Parses a string index and converts it to a zero-based integer.
+     *
+     * @param indexStr The index string to parse.
+     * @return The zero-based index as an integer.
+     * @throws AmiaException If the index string is not a valid number.
+     */
     public static int parseIndex(String indexStr) throws AmiaException {
         try {
             return Integer.parseInt(indexStr) - 1;
@@ -62,6 +69,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses a deadline command and extracts description and deadline date.
+     *
+     * @param command The deadline command string.
+     * @return A DeadlineInfo object containing the description and deadline.
+     * @throws AmiaException If the format is invalid or required fields are empty.
+     */
     public static DeadlineInfo parseDeadline(String command) throws AmiaException {
         String args = command.substring(8).trim();
         int byIdx = args.lastIndexOf("/by");
@@ -79,6 +93,14 @@ public class Parser {
         return new DeadlineInfo(desc, by);
     }
 
+    /**
+     * Parses an event command and extracts description, start time, and end time.
+     *
+     * @param command The event command string.
+     * @return An EventInfo object containing the description, start time, and end
+     *         time.
+     * @throws AmiaException If the format is invalid or required fields are empty.
+     */
     public static EventInfo parseEvent(String command) throws AmiaException {
         String args = command.substring(5).trim();
         int fromIdx = args.lastIndexOf("/from");
@@ -101,10 +123,19 @@ public class Parser {
         return new EventInfo(desc, from, to);
     }
 
+    /**
+     * Inner class to hold deadline information.
+     */
     public static class DeadlineInfo {
         private String description;
         private String deadline;
 
+        /**
+         * Constructs a DeadlineInfo with the given description and deadline.
+         *
+         * @param description The task description.
+         * @param deadline    The deadline date/time.
+         */
         public DeadlineInfo(String description, String deadline) {
             this.description = description;
             this.deadline = deadline;
@@ -119,11 +150,21 @@ public class Parser {
         }
     }
 
+    /**
+     * Inner class to hold event information.
+     */
     public static class EventInfo {
         private String description;
         private String from;
         private String to;
 
+        /**
+         * Constructs an EventInfo with the given description and time range.
+         *
+         * @param description The task description.
+         * @param from        The event start time.
+         * @param to          The event end time.
+         */
         public EventInfo(String description, String from, String to) {
             this.description = description;
             this.from = from;
