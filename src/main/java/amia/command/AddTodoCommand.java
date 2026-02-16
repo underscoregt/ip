@@ -1,19 +1,14 @@
 package amia.command;
 
 import amia.exception.AmiaException;
-import amia.exception.ErrorMessages;
 import amia.parser.Parser;
-import amia.storage.Storage;
 import amia.task.Task;
-import amia.task.TaskList;
 import amia.task.ToDo;
-import amia.ui.Ui;
 
 /**
  * Represents a command to add a ToDo task to the task list.
  */
-public class AddTodoCommand extends Command {
-    private String commandText;
+public class AddTodoCommand extends AddCommand {
 
     /**
      * Constructs an AddTodoCommand with the given command text.
@@ -21,24 +16,12 @@ public class AddTodoCommand extends Command {
      * @param commandText The full command string.
      */
     public AddTodoCommand(String commandText) {
-        this.commandText = commandText;
+        super(commandText);
     }
 
     @Override
-    public String execute(TaskList tasks, Ui ui, Storage storage) {
-        try {
-            if (tasks.size() >= TaskList.MAX_TASKS) {
-                throw new AmiaException(ErrorMessages.TASK_LIST_FULL);
-            }
-
-            String description = Parser.extractDescription(commandText, "todo");
-            Task task = new ToDo(description);
-
-            tasks.add(task);
-            storage.save(tasks.toArrayList());
-            return ui.formatAddTaskMessage(task, tasks.size());
-        } catch (AmiaException e) {
-            return e.getMessage();
-        }
+    protected Task createTask() throws AmiaException {
+        String description = Parser.extractDescription(commandText, "todo");
+        return new ToDo(description);
     }
 }
