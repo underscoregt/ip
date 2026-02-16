@@ -37,8 +37,7 @@ public class AddEventCommand extends Command {
 
             tasks.add(task);
             storage.save(tasks.toArrayList());
-            return "I've added this task!\n   " + task + "\nYou have " + tasks.size() + " task"
-                    + (tasks.size() == 1 ? "" : "s") + ".";
+            return ui.formatAddTaskMessage(task, tasks.size());
         } catch (AmiaException e) {
             return e.getMessage();
         }
