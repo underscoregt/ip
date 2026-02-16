@@ -30,11 +30,11 @@ public class TaskList {
     /**
      * Validates that the given index is within the bounds of the task list.
      *
-     * @param idx The index to validate.
+     * @param index The index to validate.
      * @throws AmiaException If the index is out of bounds.
      */
-    public void validateIndex(int idx) throws AmiaException {
-        if (idx < 0 || idx >= tasks.size()) {
+    public void validateIndex(int index) throws AmiaException {
+        if (index < 0 || index >= tasks.size()) {
             throw new AmiaException("... Invalid task number...");
         }
     }
@@ -55,47 +55,47 @@ public class TaskList {
     /**
      * Removes and returns the task at the given index.
      *
-     * @param idx The index of the task to remove.
+     * @param index The index of the task to remove.
      * @return The removed task.
      * @throws AmiaException If the index is out of bounds.
      */
-    public Task remove(int idx) throws AmiaException {
-        validateIndex(idx);
-        return tasks.remove(idx);
+    public Task remove(int index) throws AmiaException {
+        validateIndex(index);
+        return tasks.remove(index);
     }
 
     /**
      * Retrieves the task at the given index.
      *
-     * @param idx The index of the task to retrieve.
+     * @param index The index of the task to retrieve.
      * @return The task at the specified index.
      * @throws AmiaException If the index is out of bounds.
      */
-    public Task get(int idx) throws AmiaException {
-        validateIndex(idx);
-        return tasks.get(idx);
+    public Task get(int index) throws AmiaException {
+        validateIndex(index);
+        return tasks.get(index);
     }
 
     /**
      * Marks the task at the given index as done.
      *
-     * @param idx The index of the task to mark as done.
+     * @param index The index of the task to mark as done.
      * @throws AmiaException If the index is out of bounds.
      */
-    public void markDone(int idx) throws AmiaException {
-        validateIndex(idx);
-        tasks.get(idx).markDone();
+    public void markDone(int index) throws AmiaException {
+        validateIndex(index);
+        tasks.get(index).markDone();
     }
 
     /**
      * Marks the task at the given index as not done.
      *
-     * @param idx The index of the task to mark as not done.
+     * @param index The index of the task to mark as not done.
      * @throws AmiaException If the index is out of bounds.
      */
-    public void markUndone(int idx) throws AmiaException {
-        validateIndex(idx);
-        tasks.get(idx).markUndone();
+    public void markUndone(int index) throws AmiaException {
+        validateIndex(index);
+        tasks.get(index).markUndone();
     }
 
     /**

@@ -24,11 +24,11 @@ public class MarkCommand extends Command {
     @Override
     public String execute(TaskList tasks, Ui ui, Storage storage) {
         try {
-            String args = Parser.extractIndexArg(commandText, "mark");
-            int idx = Parser.parseIndex(args);
-            tasks.markDone(idx);
+            String arguments = Parser.extractIndexArgument(commandText, "mark");
+            int index = Parser.parseIndex(arguments);
+            tasks.markDone(index);
             storage.save(tasks.toArrayList());
-            return "I've marked the task as done!\n   " + tasks.get(idx);
+            return "I've marked the task as done!\n   " + tasks.get(index);
         } catch (AmiaException e) {
             return e.getMessage();
         }

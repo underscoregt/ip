@@ -25,9 +25,9 @@ public class DeleteCommand extends Command {
     @Override
     public String execute(TaskList tasks, Ui ui, Storage storage) {
         try {
-            String args = Parser.extractIndexArg(commandText, "delete");
-            int idx = Parser.parseIndex(args);
-            Task removedTask = tasks.remove(idx);
+            String arguments = Parser.extractIndexArgument(commandText, "delete");
+            int index = Parser.parseIndex(arguments);
+            Task removedTask = tasks.remove(index);
             storage.save(tasks.toArrayList());
             return "I've removed this task:\n   " + removedTask + "\nYou have " + tasks.size() + " task"
                     + (tasks.size() == 1 ? "" : "s") + ".";

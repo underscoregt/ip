@@ -35,8 +35,8 @@ public class AddCommand extends Command {
 
             Task task;
             if (commandText.startsWith("todo")) {
-                String desc = Parser.extractDescription(commandText, "todo");
-                task = new ToDo(desc);
+                String description = Parser.extractDescription(commandText, "todo");
+                task = new ToDo(description);
             } else if (commandText.startsWith("deadline")) {
                 Parser.DeadlineInfo info = Parser.parseDeadline(commandText);
                 task = new Deadline(info.getDescription(), info.getDeadline());
