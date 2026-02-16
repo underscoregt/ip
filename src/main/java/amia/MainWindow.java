@@ -37,6 +37,15 @@ public class MainWindow extends AnchorPane {
     /** Injects the Amia instance */
     public void setAmia(Amia a) {
         amia = a;
+        showWelcomeMessage();
+    }
+
+    /**
+     * Displays the welcome message when the GUI starts.
+     */
+    private void showWelcomeMessage() {
+        String welcomeMessage = "Hello! I'm Amia!\nWhat can I do for you?";
+        dialogContainer.getChildren().add(DialogBox.getAmiaDialog(welcomeMessage, amiaImage));
     }
 
     /**

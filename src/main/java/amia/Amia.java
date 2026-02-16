@@ -151,10 +151,7 @@ public class Amia {
      * Initializes the application by displaying a welcome message.
      */
     public void start() {
-        ui.showLine();
-        ui.showMessage("Hello! I'm Amia!");
-        ui.showMessage("What can I do for you?");
-        ui.showLine();
+        ui.showWelcome();
     }
 
     /**
