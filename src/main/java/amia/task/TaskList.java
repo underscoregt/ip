@@ -109,11 +109,11 @@ public class TaskList {
     }
 
     /**
-     * Returns the underlying ArrayList of tasks.
+     * Returns a defensive copy of the underlying ArrayList of tasks.
      *
-     * @return The ArrayList of tasks.
+     * @return A new ArrayList containing all tasks.
      */
     public ArrayList<Task> toArrayList() {
-        return tasks;
+        return new ArrayList<>(tasks);
     }
 }
