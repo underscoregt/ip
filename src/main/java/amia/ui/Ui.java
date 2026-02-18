@@ -69,14 +69,23 @@ public class Ui {
     }
 
     /**
+     * Formats the task count message.
+     *
+     * @param count The number of tasks.
+     * @return The formatted task count message.
+     */
+    public String formatTaskCountMessage(int count) {
+        return "You have " + count + " task" + (count == 1 ? "" : "s") + ".";
+    }
+
+    /**
      * Formats the message shown after adding a task.
      *
-     * @param task The task that was added.
+     * @param task      The task that was added.
      * @param taskCount The number of tasks after the add.
      * @return The formatted message to display.
      */
     public String formatAddTaskMessage(Task task, int taskCount) {
-        return "I've added this task!\n   " + task + "\nYou have " + taskCount + " task"
-                + (taskCount == 1 ? "" : "s") + ".";
+        return "I've added this task!\n   " + task + "\n" + formatTaskCountMessage(taskCount);
     }
 }

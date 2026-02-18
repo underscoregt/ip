@@ -29,8 +29,7 @@ public class DeleteCommand extends Command {
             int index = Parser.parseIndex(arguments);
             Task removedTask = tasks.remove(index);
             storage.save(tasks.toArrayList());
-            return "I've removed this task:\n   " + removedTask + "\nYou have " + tasks.size() + " task"
-                    + (tasks.size() == 1 ? "" : "s") + ".";
+            return "I've removed this task:\n   " + removedTask + "\n" + ui.formatTaskCountMessage(tasks.size());
         } catch (AmiaException e) {
             return e.getMessage();
         }
