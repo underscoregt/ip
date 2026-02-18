@@ -95,6 +95,7 @@ public class Storage {
      * @throws AmiaException If a valid line contains an invalid date/time.
      */
     private Task parseTaskFromLine(String line) throws AmiaException {
+        assert line != null : "Storage line must be non-null";
         String[] parts = line.split(" \\| ");
         if (parts.length < 3) {
             return null;
@@ -139,6 +140,7 @@ public class Storage {
      * @throws AmiaException If an error occurs while writing to the file.
      */
     public void save(ArrayList<Task> tasks) throws AmiaException {
+        assert tasks != null : "Task list must be non-null";
         try {
             File dir = new File(new File(filePath).getParent());
             if (dir != null && !dir.exists()) {
