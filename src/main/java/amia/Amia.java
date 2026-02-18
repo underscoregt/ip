@@ -44,6 +44,7 @@ public class Amia {
      * @return The loaded TaskList or a new empty TaskList.
      */
     private TaskList loadTasks() {
+        assert storage != null : "Storage must be initialized before loading tasks";
         try {
             return new TaskList(storage.load());
         } catch (AmiaException e) {
@@ -119,7 +120,9 @@ public class Amia {
      * @throws AmiaException If parsing or execution fails.
      */
     private String executeCommand(String input) throws AmiaException {
+        assert tasks != null && ui != null && storage != null : "Core components must be initialized";
         Command command = Parser.parse(input);
+        assert command != null : "Parser must return a command";
         String response = command.execute(tasks, ui, storage);
         isExit = command.isExit();
         return response;

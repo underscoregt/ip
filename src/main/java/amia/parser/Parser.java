@@ -28,6 +28,7 @@ public class Parser {
      */
     public static Command parse(String input) throws AmiaException {
         CommandType commandType = parseCommandType(input);
+        assert commandType != null : "Command type must be resolved";
 
         switch (commandType) {
         case TODO:
@@ -78,6 +79,7 @@ public class Parser {
      * @throws AmiaException If the description is empty.
      */
     public static String extractDescription(String command, String keyword) throws AmiaException {
+        assert command != null && keyword != null : "Command and keyword must be non-null";
         String description = command.substring(keyword.length()).trim();
         if (description.isEmpty()) {
             throw new AmiaException(ErrorMessages.EMPTY_DESCRIPTION);
@@ -94,6 +96,7 @@ public class Parser {
      * @throws AmiaException If the argument is empty.
      */
     public static String extractIndexArgument(String command, String keyword) throws AmiaException {
+        assert command != null && keyword != null : "Command and keyword must be non-null";
         String arguments = command.substring(keyword.length()).trim();
         if (arguments.isEmpty()) {
             throw new AmiaException(ErrorMessages.invalidIndexFormat(keyword));
@@ -109,6 +112,7 @@ public class Parser {
      * @throws AmiaException If the index string is not a valid number.
      */
     public static int parseIndex(String indexStr) throws AmiaException {
+        assert indexStr != null : "Index string must be non-null";
         try {
             return Integer.parseInt(indexStr) - 1;
         } catch (NumberFormatException e) {
@@ -124,6 +128,7 @@ public class Parser {
      * @throws AmiaException If the format is invalid or required fields are empty.
      */
     public static DeadlineInfo parseDeadline(String command) throws AmiaException {
+        assert command != null : "Command must be non-null";
         String arguments = command.substring(8).trim();
         int deadlineIndex = arguments.lastIndexOf("/by");
         if (deadlineIndex == -1 || arguments.isEmpty()) {
@@ -149,6 +154,7 @@ public class Parser {
      * @throws AmiaException If the format is invalid or required fields are empty.
      */
     public static EventInfo parseEvent(String command) throws AmiaException {
+        assert command != null : "Command must be non-null";
         String arguments = command.substring(5).trim();
         int fromIndex = arguments.lastIndexOf("/from");
         int toIndex = arguments.lastIndexOf("/to");

@@ -39,6 +39,7 @@ public class Ui {
      * @param s The message to display.
      */
     public void showMessage(String s) {
+        assert s != null : "Message must be non-null";
         System.out.println("\t" + s);
     }
 
@@ -86,6 +87,7 @@ public class Ui {
      * @return The formatted message to display.
      */
     public String formatAddTaskMessage(Task task, int taskCount) {
+        assert task != null : "Added task must be non-null";
         return "I've added this task!\n   " + task + "\n" + formatTaskCountMessage(taskCount);
     }
 }
