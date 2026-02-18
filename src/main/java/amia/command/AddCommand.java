@@ -31,6 +31,7 @@ public abstract class AddCommand extends Command {
             }
 
             Task task = createTask();
+            assert task != null : "createTask() must not return null";
             tasks.add(task);
             storage.save(tasks.toArrayList());
             return ui.formatAddTaskMessage(task, tasks.size());
