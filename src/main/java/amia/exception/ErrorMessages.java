@@ -41,6 +41,6 @@ public class ErrorMessages {
      * @return Formatted error message.
      */
     public static String invalidIndexFormat(String keyword) {
-        return "Invalid format. Use: " + keyword + " <task number>";
+        return "Invalid format. Use: " + keyword + " <task number> [more numbers...]";
     }
 }

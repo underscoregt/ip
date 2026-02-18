@@ -26,10 +26,22 @@ public class DeleteCommand extends Command {
     public String execute(TaskList tasks, Ui ui, Storage storage) {
         try {
             String arguments = Parser.extractIndexArgument(commandText, "delete");
-            int index = Parser.parseIndex(arguments);
-            Task removedTask = tasks.remove(index);
-            storage.save(tasks.toArrayList());
-            return "I've removed this task:\n   " + removedTask + "\n" + ui.formatTaskCountMessage(tasks.size());
+            int[] indices = Parser.parseIndices(arguments);
+            
+            if (indices.length == 1) {
+                Task removedTask = tasks.remove(indices[0]);
+                storage.save(tasks.toArrayList());
+                return "I've removed this task:\n   " + removedTask + "\n" + ui.formatTaskCountMessage(tasks.size());
+            } else {
+                StringBuilder response = new StringBuilder("I've removed these tasks:\n");
+                for (int index : indices) {
+                    Task removedTask = tasks.remove(index);
+                    response.append("   ").append(removedTask).append("\n");
+                }
+                storage.save(tasks.toArrayList());
+                response.append(ui.formatTaskCountMessage(tasks.size()));
+                return response.toString();
+            }
         } catch (AmiaException e) {
             return e.getMessage();
         }

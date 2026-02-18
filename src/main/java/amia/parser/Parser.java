@@ -121,6 +121,38 @@ public class Parser {
     }
 
     /**
+     * Parses multiple space-separated indices and converts them to zero-based integers.
+     * Returns indices sorted in descending order for safe deletion operations.
+     *
+     * @param indicesStr The space-separated indices string to parse.
+     * @return An array of zero-based indices sorted in descending order.
+     * @throws AmiaException If any index string is not a valid number.
+     */
+    public static int[] parseIndices(String indicesStr) throws AmiaException {
+        assert indicesStr != null : "Indices string must be non-null";
+        String[] parts = indicesStr.trim().split("\\s+");
+        int[] indices = new int[parts.length];
+        
+        for (int i = 0; i < parts.length; i++) {
+            try {
+                indices[i] = Integer.parseInt(parts[i]) - 1;
+            } catch (NumberFormatException e) {
+                throw new AmiaException(ErrorMessages.INVALID_TASK_NUMBER);
+            }
+        }
+        
+        // Sort in descending order for safe deletion
+        java.util.Arrays.sort(indices);
+        for (int i = 0; i < indices.length / 2; i++) {
+            int temp = indices[i];
+            indices[i] = indices[indices.length - 1 - i];
+            indices[indices.length - 1 - i] = temp;
+        }
+        
+        return indices;
+    }
+
+    /**
      * Parses a deadline command and extracts description and deadline date.
      *
      * @param command The deadline command string.
