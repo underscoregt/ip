@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 import amia.exception.AmiaException;
+import amia.exception.ErrorMessages;
 
 /**
  * Represents a task with a deadline.
@@ -28,7 +29,7 @@ public class Deadline extends Task {
         try {
             this.by = LocalDateTime.parse(byStr, INPUT_FORMAT);
         } catch (DateTimeParseException e) {
-            throw new AmiaException("...Invalid date/time format. Use yyyy-MM-dd HHmm");
+            throw new AmiaException(ErrorMessages.INVALID_DATETIME_FORMAT);
         }
     }
 

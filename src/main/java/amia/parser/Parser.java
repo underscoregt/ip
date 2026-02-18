@@ -1,11 +1,58 @@
 package amia.parser;
 
+import amia.command.AddDeadlineCommand;
+import amia.command.AddEventCommand;
+import amia.command.AddTodoCommand;
+import amia.command.Command;
+import amia.command.DeleteCommand;
+import amia.command.ExitCommand;
+import amia.command.FindCommand;
+import amia.command.ListCommand;
+import amia.command.MarkCommand;
+import amia.command.UnknownCommand;
+import amia.command.UnmarkCommand;
 import amia.exception.AmiaException;
+import amia.exception.ErrorMessages;
 
 /**
  * Parses user commands and extracts relevant information.
  */
 public class Parser {
+
+    /**
+     * Parses a command string and returns the appropriate Command object.
+     *
+     * @param input The user's input string.
+     * @return The Command object to execute.
+     * @throws AmiaException If parsing fails.
+     */
+    public static Command parse(String input) throws AmiaException {
+        CommandType commandType = parseCommandType(input);
+
+        switch (commandType) {
+        case TODO:
+            return new AddTodoCommand(input);
+        case DEADLINE:
+            return new AddDeadlineCommand(input);
+        case EVENT:
+            return new AddEventCommand(input);
+        case MARK:
+            return new MarkCommand(input);
+        case UNMARK:
+            return new UnmarkCommand(input);
+        case DELETE:
+            return new DeleteCommand(input);
+        case LIST:
+            return new ListCommand();
+        case FIND:
+            return new FindCommand(input);
+        case BYE:
+            return new ExitCommand();
+        case UNKNOWN:
+        default:
+            return new UnknownCommand();
+        }
+    }
 
     /**
      * Parses a command string and returns the corresponding CommandType.
@@ -16,10 +63,10 @@ public class Parser {
      */
     public static CommandType parseCommandType(String input) throws AmiaException {
         if (input == null || input.trim().isEmpty()) {
-            throw new AmiaException("...?");
+            throw new AmiaException(ErrorMessages.EMPTY_INPUT);
         }
-        CommandType cmdType = CommandType.fromString(input.trim().toLowerCase());
-        return cmdType;
+        CommandType commandType = CommandType.fromString(input.trim().toLowerCase());
+        return commandType;
     }
 
     /**
@@ -31,11 +78,11 @@ public class Parser {
      * @throws AmiaException If the description is empty.
      */
     public static String extractDescription(String command, String keyword) throws AmiaException {
-        String desc = command.substring(keyword.length()).trim();
-        if (desc.isEmpty()) {
-            throw new AmiaException("... The description of a task cannot be empty...");
+        String description = command.substring(keyword.length()).trim();
+        if (description.isEmpty()) {
+            throw new AmiaException(ErrorMessages.EMPTY_DESCRIPTION);
         }
-        return desc;
+        return description;
     }
 
     /**
@@ -46,12 +93,12 @@ public class Parser {
      * @return The extracted index argument as a string.
      * @throws AmiaException If the argument is empty.
      */
-    public static String extractIndexArg(String command, String keyword) throws AmiaException {
-        String args = command.substring(keyword.length()).trim();
-        if (args.isEmpty()) {
-            throw new AmiaException("... Invalid format... Use: " + keyword + " <index>");
+    public static String extractIndexArgument(String command, String keyword) throws AmiaException {
+        String arguments = command.substring(keyword.length()).trim();
+        if (arguments.isEmpty()) {
+            throw new AmiaException(ErrorMessages.invalidIndexFormat(keyword));
         }
-        return args;
+        return arguments;
     }
 
     /**
@@ -65,7 +112,7 @@ public class Parser {
         try {
             return Integer.parseInt(indexStr) - 1;
         } catch (NumberFormatException e) {
-            throw new AmiaException("... Invalid task number...");
+            throw new AmiaException(ErrorMessages.INVALID_TASK_NUMBER);
         }
     }
 
@@ -77,20 +124,20 @@ public class Parser {
      * @throws AmiaException If the format is invalid or required fields are empty.
      */
     public static DeadlineInfo parseDeadline(String command) throws AmiaException {
-        String args = command.substring(8).trim();
-        int byIdx = args.lastIndexOf("/by");
-        if (byIdx == -1 || args.isEmpty()) {
-            throw new AmiaException("Invalid format... Use: deadline <desc> /by <date>");
+        String arguments = command.substring(8).trim();
+        int deadlineIndex = arguments.lastIndexOf("/by");
+        if (deadlineIndex == -1 || arguments.isEmpty()) {
+            throw new AmiaException(ErrorMessages.INVALID_DEADLINE_FORMAT);
         }
-        String desc = args.substring(0, byIdx).trim();
-        String by = args.substring(byIdx + 3).trim();
-        if (desc.isEmpty()) {
-            throw new AmiaException("... The description of a task can't be empty...");
+        String description = arguments.substring(0, deadlineIndex).trim();
+        String deadline = arguments.substring(deadlineIndex + 3).trim();
+        if (description.isEmpty()) {
+            throw new AmiaException(ErrorMessages.EMPTY_DESCRIPTION);
         }
-        if (by.isEmpty()) {
-            throw new AmiaException("... The deadline can't be empty...");
+        if (deadline.isEmpty()) {
+            throw new AmiaException(ErrorMessages.EMPTY_DEADLINE);
         }
-        return new DeadlineInfo(desc, by);
+        return new DeadlineInfo(description, deadline);
     }
 
     /**
@@ -102,25 +149,25 @@ public class Parser {
      * @throws AmiaException If the format is invalid or required fields are empty.
      */
     public static EventInfo parseEvent(String command) throws AmiaException {
-        String args = command.substring(5).trim();
-        int fromIdx = args.lastIndexOf("/from");
-        int toIdx = args.lastIndexOf("/to");
-        if (fromIdx == -1 || toIdx == -1 || args.isEmpty()) {
-            throw new AmiaException("Invalid format... Use: event <desc> /from <start> /to <end>");
+        String arguments = command.substring(5).trim();
+        int fromIndex = arguments.lastIndexOf("/from");
+        int toIndex = arguments.lastIndexOf("/to");
+        if (fromIndex == -1 || toIndex == -1 || arguments.isEmpty()) {
+            throw new AmiaException(ErrorMessages.INVALID_EVENT_FORMAT);
         }
-        String desc = args.substring(0, fromIdx).trim();
-        String from = args.substring(fromIdx + 5, toIdx).trim();
-        String to = args.substring(toIdx + 3).trim();
-        if (desc.isEmpty()) {
-            throw new AmiaException("...The description of a task can't be empty...");
+        String description = arguments.substring(0, fromIndex).trim();
+        String from = arguments.substring(fromIndex + 5, toIndex).trim();
+        String to = arguments.substring(toIndex + 3).trim();
+        if (description.isEmpty()) {
+            throw new AmiaException(ErrorMessages.EMPTY_DESCRIPTION);
         }
         if (from.isEmpty()) {
-            throw new AmiaException("... The start time can't be empty...");
+            throw new AmiaException(ErrorMessages.EMPTY_START_TIME);
         }
         if (to.isEmpty()) {
-            throw new AmiaException("... The end time can't be empty...");
+            throw new AmiaException(ErrorMessages.EMPTY_END_TIME);
         }
-        return new EventInfo(desc, from, to);
+        return new EventInfo(description, from, to);
     }
 
     /**

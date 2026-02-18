@@ -24,11 +24,11 @@ public class UnmarkCommand extends Command {
     @Override
     public String execute(TaskList tasks, Ui ui, Storage storage) {
         try {
-            String args = Parser.extractIndexArg(commandText, "unmark");
-            int idx = Parser.parseIndex(args);
-            tasks.markUndone(idx);
+            String arguments = Parser.extractIndexArgument(commandText, "unmark");
+            int index = Parser.parseIndex(arguments);
+            tasks.markUndone(index);
             storage.save(tasks.toArrayList());
-            return "I've marked the task as not done yet.\n   " + tasks.get(idx);
+            return "I've marked the task as not done yet.\n   " + tasks.get(index);
         } catch (AmiaException e) {
             return e.getMessage();
         }

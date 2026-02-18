@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import amia.exception.AmiaException;
+import amia.exception.ErrorMessages;
 import amia.task.Deadline;
 import amia.task.Event;
 import amia.task.Task;
@@ -73,38 +74,62 @@ public class Storage {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] parts = line.split(" \\| ");
-
-                String type = parts[0];
-                boolean isDone = parts[1].equals("1");
-
-                Task task;
-                switch (type) {
-                case "T":
-                    task = new ToDo(parts[2]);
-                    break;
-                case "D":
-                    task = new Deadline(parts[2], LocalDateTime.parse(parts[3], FILE_FORMAT).format(INPUT_FORMAT));
-                    break;
-                case "E":
-                    task = new Event(parts[2], LocalDateTime.parse(parts[3], FILE_FORMAT).format(INPUT_FORMAT),
-                            LocalDateTime.parse(parts[4], FILE_FORMAT).format(INPUT_FORMAT));
-                    break;
-                default:
-                    continue;
+                Task task = parseTaskFromLine(line);
+                if (task != null) {
+                    tasks.add(task);
                 }
-
-                if (isDone) {
-                    task.markDone();
-                }
-
-                tasks.add(task);
             }
         } catch (IOException e) {
-            throw new AmiaException("... I can't load the saved tasks...");
+            throw new AmiaException(ErrorMessages.CANNOT_LOAD_TASKS);
         }
 
         return tasks;
+    }
+
+    /**
+     * Parses a single line from the storage file into a Task. Returns null when the
+     * line is malformed or unrecognized.
+     *
+     * @param line The raw line from the storage file.
+     * @return The parsed Task, or null if the line should be skipped.
+     * @throws AmiaException If a valid line contains an invalid date/time.
+     */
+    private Task parseTaskFromLine(String line) throws AmiaException {
+        String[] parts = line.split(" \\| ");
+        if (parts.length < 3) {
+            return null;
+        }
+
+        String type = parts[0];
+        boolean isDone = parts[1].equals("1");
+
+        Task task;
+        switch (type) {
+        case "T":
+            task = new ToDo(parts[2]);
+            break;
+        case "D":
+            if (parts.length < 4) {
+                return null;
+            }
+            task = new Deadline(parts[2], LocalDateTime.parse(parts[3], FILE_FORMAT).format(INPUT_FORMAT));
+            break;
+        case "E":
+            if (parts.length < 5) {
+                return null;
+            }
+            task = new Event(parts[2], LocalDateTime.parse(parts[3], FILE_FORMAT).format(INPUT_FORMAT),
+                    LocalDateTime.parse(parts[4], FILE_FORMAT).format(INPUT_FORMAT));
+            break;
+        default:
+            return null;
+        }
+
+        if (isDone) {
+            task.markDone();
+        }
+
+        return task;
     }
 
     /**
@@ -120,14 +145,14 @@ public class Storage {
                 dir.mkdirs();
             }
 
-            BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
-            for (Task task : tasks) {
-                bw.write(task.toFileString());
-                bw.newLine();
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
+                for (Task task : tasks) {
+                    bw.write(task.toFileString());
+                    bw.newLine();
+                }
             }
-            bw.close();
         } catch (IOException e) {
-            throw new AmiaException("... I can't save the tasks...");
+            throw new AmiaException(ErrorMessages.CANNOT_SAVE_TASKS);
         }
     }
 }

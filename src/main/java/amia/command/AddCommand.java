@@ -1,21 +1,18 @@
 package amia.command;
 
 import amia.exception.AmiaException;
-import amia.parser.Parser;
+import amia.exception.ErrorMessages;
 import amia.storage.Storage;
-import amia.task.Deadline;
-import amia.task.Event;
 import amia.task.Task;
 import amia.task.TaskList;
-import amia.task.ToDo;
 import amia.ui.Ui;
 
 /**
- * Represents a command to add a task to the task list.
+ * Abstract base class for commands that add tasks to the task list. Implements
+ * the template method pattern to eliminate code duplication.
  */
-public class AddCommand extends Command {
-    private static final int MAX_TASKS = 100;
-    private String commandText;
+public abstract class AddCommand extends Command {
+    protected String commandText;
 
     /**
      * Constructs an AddCommand with the given command text.
@@ -29,30 +26,26 @@ public class AddCommand extends Command {
     @Override
     public String execute(TaskList tasks, Ui ui, Storage storage) {
         try {
-            if (tasks.size() >= MAX_TASKS) {
-                throw new AmiaException("... The task list is full...");
+            if (tasks.size() >= TaskList.MAX_TASKS) {
+                throw new AmiaException(ErrorMessages.TASK_LIST_FULL);
             }
 
-            Task task;
-            if (commandText.startsWith("todo")) {
-                String desc = Parser.extractDescription(commandText, "todo");
-                task = new ToDo(desc);
-            } else if (commandText.startsWith("deadline")) {
-                Parser.DeadlineInfo info = Parser.parseDeadline(commandText);
-                task = new Deadline(info.getDescription(), info.getDeadline());
-            } else if (commandText.startsWith("event")) {
-                Parser.EventInfo info = Parser.parseEvent(commandText);
-                task = new Event(info.getDescription(), info.getFrom(), info.getTo());
-            } else {
-                task = new ToDo(commandText);
-            }
-
+            Task task = createTask();
             tasks.add(task);
             storage.save(tasks.toArrayList());
-            return "I've added this task!\n   " + task + "\nYou have " + tasks.size() + " task"
-                    + (tasks.size() == 1 ? "" : "s") + ".";
+            return ui.formatAddTaskMessage(task, tasks.size());
         } catch (AmiaException e) {
             return e.getMessage();
         }
     }
+
+    /**
+     * Creates the specific task type for this command. Subclasses must implement
+     * this method to define how to parse the command text and create the
+     * appropriate task.
+     *
+     * @return The created task.
+     * @throws AmiaException If task creation fails.
+     */
+    protected abstract Task createTask() throws AmiaException;
 }

@@ -20,8 +20,12 @@ public enum CommandType {
      * @return The CommandType that matches the input, or UNKNOWN if no match.
      */
     public static CommandType fromString(String input) {
+        // Extract the first word from the input to avoid false matches
+        String[] parts = input.split("\\s+", 2);
+        String command = parts[0].toLowerCase();
+
         for (CommandType cmd : CommandType.values()) {
-            if (input.startsWith(cmd.value)) {
+            if (command.equals(cmd.value)) {
                 return cmd;
             }
         }

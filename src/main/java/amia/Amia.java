@@ -1,16 +1,7 @@
 package amia;
 
-import amia.command.AddCommand;
 import amia.command.Command;
-import amia.command.DeleteCommand;
-import amia.command.ExitCommand;
-import amia.command.FindCommand;
-import amia.command.ListCommand;
-import amia.command.MarkCommand;
-import amia.command.UnknownCommand;
-import amia.command.UnmarkCommand;
 import amia.exception.AmiaException;
-import amia.parser.CommandType;
 import amia.parser.Parser;
 import amia.storage.Storage;
 import amia.task.TaskList;
@@ -31,13 +22,7 @@ public class Amia {
      * and loads saved tasks.
      */
     public Amia() {
-        this.storage = new Storage(null);
-        this.ui = new Ui();
-        try {
-            this.tasks = new TaskList(storage.load());
-        } catch (AmiaException e) {
-            this.tasks = new TaskList();
-        }
+        this(null);
     }
 
     /**
@@ -48,10 +33,21 @@ public class Amia {
     public Amia(String filePath) {
         this.storage = new Storage(filePath);
         this.ui = new Ui();
+        this.tasks = loadTasks();
+        assert this.storage != null && this.ui != null : "Storage and UI must be initialized";
+        assert this.tasks != null : "Tasks must be initialized";
+    }
+
+    /**
+     * Loads tasks from storage, returning an empty TaskList if loading fails.
+     *
+     * @return The loaded TaskList or a new empty TaskList.
+     */
+    private TaskList loadTasks() {
         try {
-            this.tasks = new TaskList(storage.load());
+            return new TaskList(storage.load());
         } catch (AmiaException e) {
-            this.tasks = new TaskList();
+            return new TaskList();
         }
     }
 
@@ -68,39 +64,6 @@ public class Amia {
     }
 
     /**
-     * Parses a command string and returns the appropriate Command object.
-     *
-     * @param input The user's input string.
-     * @return The Command object to execute.
-     * @throws AmiaException If parsing fails.
-     */
-    private Command parseCommand(String input) throws AmiaException {
-        CommandType cmdType = Parser.parseCommandType(input);
-
-        switch (cmdType) {
-        case TODO:
-        case DEADLINE:
-        case EVENT:
-            return new AddCommand(input);
-        case MARK:
-            return new MarkCommand(input);
-        case UNMARK:
-            return new UnmarkCommand(input);
-        case DELETE:
-            return new DeleteCommand(input);
-        case LIST:
-            return new ListCommand();
-        case FIND:
-            return new FindCommand(input);
-        case BYE:
-            return new ExitCommand();
-        case UNKNOWN:
-        default:
-            return new UnknownCommand();
-        }
-    }
-
-    /**
      * Generates a response for the user's input. Used by the GUI.
      *
      * @param input The user's command.
@@ -108,10 +71,7 @@ public class Amia {
      */
     public String getResponse(String input) {
         try {
-            Command command = parseCommand(input);
-            String response = command.execute(tasks, ui, storage);
-            isExit = command.isExit();
-            return response;
+            return executeCommand(input);
         } catch (AmiaException e) {
             return e.getMessage();
         }
@@ -131,36 +91,67 @@ public class Amia {
      * Used by the CLI.
      */
     public void loop() {
-        while (true) {
-            try {
-                String input = ui.readCommand();
-                Command command = parseCommand(input);
-                String response = command.execute(tasks, ui, storage);
-
-                ui.showLine();
-                ui.showMessage(response);
-                ui.showLine();
-
-                if (command.isExit()) {
-                    ui.close();
-                    return;
-                }
-            } catch (Exception e) {
-                ui.showLine();
-                ui.showMessage(e.getMessage());
-                ui.showLine();
-            }
+        while (!shouldExit()) {
+            processOneCommand();
         }
+        ui.close();
+    }
+
+    /**
+     * Processes a single command from the user in the CLI. Reads input, executes
+     * the command, and displays the result.
+     */
+    private void processOneCommand() {
+        try {
+            String input = ui.readCommand();
+            String response = getResponse(input);
+            displayResponse(response);
+        } catch (Exception e) {
+            displayError(e.getMessage());
+        }
+    }
+
+    /**
+     * Executes a parsed command and updates exit state.
+     *
+     * @param input The user's command string.
+     * @return The response string from command execution.
+     * @throws AmiaException If parsing or execution fails.
+     */
+    private String executeCommand(String input) throws AmiaException {
+        Command command = Parser.parse(input);
+        String response = command.execute(tasks, ui, storage);
+        isExit = command.isExit();
+        return response;
+    }
+
+    /**
+     * Displays a response message with formatting lines.
+     *
+     * @param response The message to display.
+     */
+    private void displayResponse(String response) {
+        ui.showLine();
+        ui.showMessage(response);
+        ui.showLine();
+    }
+
+    /**
+     * Displays an error message with formatting lines.
+     *
+     * @param errorMessage The error message to display.
+     */
+    private void displayError(String errorMessage) {
+        ui.showLine();
+        ui.showMessage(errorMessage);
+        ui.showLine();
     }
 
     /**
      * Initializes the application by displaying a welcome message.
      */
     public void start() {
-        ui.showLine();
-        ui.showMessage("Hello! I'm Amia!");
-        ui.showMessage("What can I do for you?");
-        ui.showLine();
+        ui.showWelcome();
     }
 
     /**
