@@ -7,7 +7,6 @@ public enum CommandType {
     UNMARK("unmark"),
     DELETE("delete"),
     LIST("list"),
-    FIND("find"),
     BYE("bye"),
     UNKNOWN("unknown");
 
